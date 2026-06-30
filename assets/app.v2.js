@@ -26,7 +26,8 @@
       noResults: 'لا توجد مواقع مطابقة للفلاتر الحالية.', results: 'موقع مطابق للفلاتر الحالية.', mapError: 'تعذر تحميل مكتبة الخريطة. أعد تحميل الصفحة أو تحقق من الاتصال بالإنترنت.', dataError: 'حدث خطأ أثناء تحميل البيانات.',
       source: 'المصدر', googleMaps: 'Google Maps', location: 'الموقع', operator: 'المشغل', connector: 'المقبس', chargers: 'الشواحن', guns: 'المخارج', power: 'القدرة', status: 'الحالة', quality: 'جودة البيانات', siteType: 'نوع الموقع',
       reviewWarning: 'تنبيه: يلزم التحقق من الإحداثيات قبل الاعتماد النهائي.', perCharger: 'لكل شاحن', totalNominal: 'إجمالي اسمي', closeFilters: 'إغلاق الفلاتر', openFilters: 'فتح الفلاتر', dark: 'الوضع الداكن', light: 'الوضع الفاتح',
-      share: 'مشاركة هذا الشاحن', nativeShare: 'مشاركة', copyLink: 'نسخ الرابط', copiedLink: 'تم نسخ الرابط', facebook: 'فيسبوك', whatsapp: 'واتساب', telegram: 'تلغرام', x: 'X', instagram: 'إنستغرام', tiktok: 'تيك توك'
+      share: 'مشاركة هذا الشاحن', nativeShare: 'مشاركة', copyLink: 'نسخ الرابط', copiedLink: 'تم نسخ الرابط', facebook: 'فيسبوك', whatsapp: 'واتساب', telegram: 'تلغرام', x: 'X', instagram: 'إنستغرام', tiktok: 'تيك توك',
+      yourLocation: 'موقعك الحالي', locationAccuracy: 'دقة تقريبية', locationUnavailable: 'لم يتم تفعيل مشاركة الموقع.'
     },
     en: {
       topbarTitle: 'EV Charging Stations Map in Syria',
@@ -45,7 +46,8 @@
       mapError: 'The map library could not be loaded. Please reload the page or check your internet connection.', dataError: 'An error occurred while loading the data.',
       source: 'Source', googleMaps: 'Google Maps', location: 'Location', operator: 'Operator', connector: 'Connector', chargers: 'Chargers', guns: 'Outlets', power: 'Power', status: 'Status', quality: 'Data quality', siteType: 'Site type',
       reviewWarning: 'Review required: coordinates should be verified before final publication.', perCharger: 'per charger', totalNominal: 'total nominal', closeFilters: 'Close filters', openFilters: 'Open filters', dark: 'Dark mode', light: 'Light mode',
-      share: 'Share this charger', nativeShare: 'Share', copyLink: 'Copy link', copiedLink: 'Link copied', facebook: 'Facebook', whatsapp: 'WhatsApp', telegram: 'Telegram', x: 'X', instagram: 'Instagram', tiktok: 'TikTok'
+      share: 'Share this charger', nativeShare: 'Share', copyLink: 'Copy link', copiedLink: 'Link copied', facebook: 'Facebook', whatsapp: 'WhatsApp', telegram: 'Telegram', x: 'X', instagram: 'Instagram', tiktok: 'TikTok',
+      yourLocation: 'Your current location', locationAccuracy: 'Approx. accuracy', locationUnavailable: 'Location sharing was not enabled.'
     }
   };
 
@@ -61,7 +63,21 @@
     }
   };
 
-  const state = { language: localStorage.getItem(STORAGE_KEYS.language) || 'ar', theme: localStorage.getItem(STORAGE_KEYS.theme) || 'light', meta: {}, chargers: [], filtered: [], markers: new Map(), map: null, layer: null, filtersCollapsed: false };
+  const state = {
+    language: localStorage.getItem(STORAGE_KEYS.language) || 'ar',
+    theme: localStorage.getItem(STORAGE_KEYS.theme) || 'light',
+    meta: {},
+    chargers: [],
+    filtered: [],
+    markers: new Map(),
+    map: null,
+    layer: null,
+    userMarker: null,
+    userAccuracyCircle: null,
+    userPosition: null,
+    filtersCollapsed: false
+  };
+
   const $ = (id) => document.getElementById(id);
   const ui = {};
 
@@ -109,6 +125,7 @@
       buildFilters();
       applyFilters(true);
       focusStationFromUrl();
+      requestUserLocation();
     } catch (error) { showError(error.message || t('dataError')); }
   }
 
@@ -135,9 +152,60 @@
     ui.mobileFiltersToggle.addEventListener('click', openFiltersDrawer);
     ui.closeFilters.addEventListener('click', closeFiltersDrawer);
     ui.filtersOverlay.addEventListener('click', closeFiltersDrawer);
-    ui.desktopFiltersToggle.addEventListener('click', toggleDesktopFilters);
+    ui.desktopFiltersToggle.addEventListener('click', openFiltersDrawer);
     document.addEventListener('click', handleShareClick);
-    window.addEventListener('resize', () => { if (window.innerWidth >= 760) closeFiltersDrawer(); if (state.map) setTimeout(() => state.map.invalidateSize(), 120); });
+    window.addEventListener('resize', () => { if (state.map) setTimeout(() => state.map.invalidateSize(), 120); });
+  }
+
+  function requestUserLocation() {
+    if (!navigator.geolocation || !state.map) return;
+    navigator.geolocation.getCurrentPosition(
+      (position) => showUserLocation(position),
+      () => {},
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 300000 }
+    );
+  }
+
+  function showUserLocation(position) {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+    const accuracy = Math.round(position.coords.accuracy || 0);
+    state.userPosition = [lat, lng];
+
+    if (state.userMarker) state.userMarker.remove();
+    if (state.userAccuracyCircle) state.userAccuracyCircle.remove();
+
+    state.userAccuracyCircle = L.circle([lat, lng], {
+      radius: accuracy || 50,
+      color: '#217A8D',
+      fillColor: '#217A8D',
+      fillOpacity: 0.08,
+      weight: 1
+    }).addTo(state.map);
+
+    state.userMarker = L.marker([lat, lng], { icon: userLocationIcon(), title: t('yourLocation') })
+      .bindPopup(`<div class="ev-popup"><h3>${escapeHtml(t('yourLocation'))}</h3><p>${escapeHtml(t('locationAccuracy'))}: ${formatNumber(accuracy)} m</p></div>`)
+      .addTo(state.map);
+
+    if (!new URLSearchParams(window.location.search).get('charger')) fitMapIncludingUser();
+  }
+
+  function userLocationIcon() {
+    return L.divIcon({
+      className: '',
+      html: '<div class="ev-user-marker"><span></span></div>',
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+      popupAnchor: [0, -18]
+    });
+  }
+
+  function fitMapIncludingUser() {
+    const points = state.filtered.map((item) => [item.lat, item.lng]);
+    if (state.userPosition) points.push(state.userPosition);
+    if (!points.length) return;
+    if (points.length === 1) state.map.setView(points[0], 12);
+    else state.map.fitBounds(points, { padding: [44, 44], maxZoom: 10 });
   }
 
   function handleShareClick(event) {
@@ -153,32 +221,24 @@
   async function shareItem(item, action, trigger) {
     const url = shareUrl(item);
     const text = shareText(item);
-    const encodedUrl = encodeURIComponent(url);
-    const encodedText = encodeURIComponent(`${text}\n${url}`);
-    const links = {
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
-      whatsapp: `https://wa.me/?text=${encodedText}`,
-      telegram: `https://t.me/share/url?url=${encodedUrl}&text=${encodeURIComponent(text)}`,
-      x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodedUrl}`
-    };
 
     if (action === 'native' && navigator.share) {
       try { await navigator.share({ title: name(item), text, url }); return; } catch (_) { return; }
     }
-    if (links[action]) { window.open(links[action], '_blank', 'noopener,noreferrer,width=720,height=620'); return; }
-    await copyShareLink(url, trigger);
+
+    await copyShareLink(`${text}\n${url}`, trigger);
   }
 
-  async function copyShareLink(url, trigger) {
+  async function copyShareLink(value, trigger) {
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(value);
       if (trigger) {
         const original = trigger.textContent;
         trigger.textContent = t('copiedLink');
         setTimeout(() => { trigger.textContent = original; }, 1400);
       }
     } catch (_) {
-      window.prompt(t('copyLink'), url);
+      window.prompt(t('copyLink'), value);
     }
   }
 
@@ -191,6 +251,19 @@
     const connector = list(item.connectors);
     if (state.language === 'ar') return `${name(item)} — ${place(item)}\n${connector}، ${formatNumber(item.ratedPower)} kW لكل شاحن، ${formatNumber(item.totalGuns)} مخارج شحن.`;
     return `${name(item)} — ${place(item)}\n${connector}, ${formatNumber(item.ratedPower)} kW per charger, ${formatNumber(item.totalGuns)} charging outlets.`;
+  }
+
+  function sharePlatformUrl(item, platform) {
+    const url = encodeURIComponent(shareUrl(item));
+    const text = encodeURIComponent(shareText(item));
+    const textWithUrl = encodeURIComponent(`${shareText(item)}\n${shareUrl(item)}`);
+    const links = {
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+      whatsapp: `https://wa.me/?text=${textWithUrl}`,
+      telegram: `https://t.me/share/url?url=${url}&text=${text}`,
+      x: `https://twitter.com/intent/tweet?text=${text}&url=${url}`
+    };
+    return links[platform] || '#';
   }
 
   function applyTheme(theme) {
@@ -211,10 +284,15 @@
     ui.mobileFiltersToggle.setAttribute('aria-label', t('openFilters'));
     ui.closeFilters.setAttribute('aria-label', t('closeFilters'));
     ui.connectorBadge.textContent = t('connectorBadge');
-    ui.desktopFiltersToggle.textContent = state.filtersCollapsed ? t('showFilters') : t('hideFilters');
+    ui.desktopFiltersToggle.textContent = t('openFilters');
     applyTheme(state.theme);
-    if (shouldRender && state.chargers.length) { renderMeta(); buildFilters(true); applyFilters(true); }
+    if (shouldRender && state.chargers.length) { renderMeta(); buildFilters(true); applyFilters(true); refreshUserPopup(); }
     if (state.map) setTimeout(() => state.map.invalidateSize(), 120);
+  }
+
+  function refreshUserPopup() {
+    if (!state.userMarker || !state.userPosition) return;
+    state.userMarker.setPopupContent(`<div class="ev-popup"><h3>${escapeHtml(t('yourLocation'))}</h3></div>`);
   }
 
   function renderMeta() {
@@ -299,7 +377,7 @@
       <div class="ev-chip-row"><span class="ev-chip">${escapeHtml(list(item.connectors))}</span><span class="ev-chip">${formatNumber(item.chargerCount)} ${t('chargers')}</span><span class="ev-chip">${formatNumber(item.ratedPower)} kW</span><span class="ev-chip">${formatNumber(item.totalGuns)} ${t('guns')}</span></div>
       <p><strong>${t('operator')}:</strong> ${escapeHtml(item.operator)}</p><p><strong>${t('siteType')}:</strong> ${escapeHtml(siteType(item))}</p>${item.needsReview ? `<p class="ev-warning-text">${escapeHtml(t('reviewWarning'))}</p>` : ''}${note(item) ? `<p>${escapeHtml(note(item))}</p>` : ''}
       <div class="ev-card__footer"><span>${t('quality')}: ${escapeHtml(label('quality', item.quality))}</span>${item.sourceUrl ? `<a class="ev-source" href="${safeUrl(item.sourceUrl)}" target="_blank" rel="noopener">${t('source')}</a>` : ''}</div>
-      ${shareHtml(item, 'card')}`;
+      ${shareHtml(item)}`;
     article.addEventListener('click', (event) => { if (event.target.closest('a,button')) return; focusMarker(item.id); closeFiltersDrawer(); });
     article.addEventListener('keydown', (event) => { if (event.key !== 'Enter' && event.key !== ' ') return; event.preventDefault(); focusMarker(item.id); closeFiltersDrawer(); });
     return article;
@@ -307,12 +385,12 @@
 
   function popupHtml(item) {
     const mapsUrl = `https://www.google.com/maps?q=${encodeURIComponent(`${item.lat},${item.lng}`)}`;
-    return `<div class="ev-popup"><h3>${escapeHtml(name(item))}</h3><p><strong>${t('location')}:</strong> ${escapeHtml(place(item))}</p><p><strong>${t('operator')}:</strong> ${escapeHtml(item.operator)}</p><p><strong>${t('connector')}:</strong> ${escapeHtml(list(item.connectors))}</p><p><strong>${t('chargers')}:</strong> ${formatNumber(item.chargerCount)} / <strong>${t('guns')}:</strong> ${formatNumber(item.totalGuns)}</p><p><strong>${t('power')}:</strong> ${formatNumber(item.ratedPower)} kW ${t('perCharger')} / ${formatNumber(item.totalPower)} kW ${t('totalNominal')}</p><p><strong>${t('status')}:</strong> ${escapeHtml(label('status', item.status))}</p><p><strong>${t('quality')}:</strong> ${escapeHtml(label('quality', item.quality))}</p>${item.needsReview ? `<p class="ev-warning-text">${escapeHtml(t('reviewWarning'))}</p>` : ''}<p class="ev-popup__actions"><a class="ev-source" href="${safeUrl(mapsUrl)}" target="_blank" rel="noopener">${t('googleMaps')}</a>${item.sourceUrl ? ` <a class="ev-source" href="${safeUrl(item.sourceUrl)}" target="_blank" rel="noopener">${t('source')}</a>` : ''}</p>${shareHtml(item, 'popup')}</div>`;
+    return `<div class="ev-popup"><h3>${escapeHtml(name(item))}</h3><p><strong>${t('location')}:</strong> ${escapeHtml(place(item))}</p><p><strong>${t('operator')}:</strong> ${escapeHtml(item.operator)}</p><p><strong>${t('connector')}:</strong> ${escapeHtml(list(item.connectors))}</p><p><strong>${t('chargers')}:</strong> ${formatNumber(item.chargerCount)} / <strong>${t('guns')}:</strong> ${formatNumber(item.totalGuns)}</p><p><strong>${t('power')}:</strong> ${formatNumber(item.ratedPower)} kW ${t('perCharger')} / ${formatNumber(item.totalPower)} kW ${t('totalNominal')}</p><p><strong>${t('status')}:</strong> ${escapeHtml(label('status', item.status))}</p><p><strong>${t('quality')}:</strong> ${escapeHtml(label('quality', item.quality))}</p>${item.needsReview ? `<p class="ev-warning-text">${escapeHtml(t('reviewWarning'))}</p>` : ''}<p class="ev-popup__actions"><a class="ev-source" href="${safeUrl(mapsUrl)}" target="_blank" rel="noopener">${t('googleMaps')}</a>${item.sourceUrl ? ` <a class="ev-source" href="${safeUrl(item.sourceUrl)}" target="_blank" rel="noopener">${t('source')}</a>` : ''}</p>${shareHtml(item)}</div>`;
   }
 
   function shareHtml(item) {
     const id = escapeHtml(item.id);
-    return `<div class="ev-share" aria-label="${escapeHtml(t('share'))}"><strong>${escapeHtml(t('share'))}</strong><div class="ev-share__grid"><button class="ev-share-btn ev-share-btn--native" type="button" data-share="native" data-id="${id}">${escapeHtml(t('nativeShare'))}</button><button class="ev-share-btn ev-share-btn--whatsapp" type="button" data-share="whatsapp" data-id="${id}">${escapeHtml(t('whatsapp'))}</button><button class="ev-share-btn ev-share-btn--facebook" type="button" data-share="facebook" data-id="${id}">${escapeHtml(t('facebook'))}</button><button class="ev-share-btn ev-share-btn--telegram" type="button" data-share="telegram" data-id="${id}">${escapeHtml(t('telegram'))}</button><button class="ev-share-btn ev-share-btn--x" type="button" data-share="x" data-id="${id}">${escapeHtml(t('x'))}</button><button class="ev-share-btn ev-share-btn--instagram" type="button" data-share="instagram" data-id="${id}">${escapeHtml(t('instagram'))}</button><button class="ev-share-btn ev-share-btn--tiktok" type="button" data-share="tiktok" data-id="${id}">${escapeHtml(t('tiktok'))}</button><button class="ev-share-btn ev-share-btn--copy" type="button" data-share="copy" data-id="${id}">${escapeHtml(t('copyLink'))}</button></div></div>`;
+    return `<div class="ev-share" aria-label="${escapeHtml(t('share'))}"><strong>${escapeHtml(t('share'))}</strong><div class="ev-share__grid"><button class="ev-share-btn ev-share-btn--native" type="button" data-share="native" data-id="${id}">${escapeHtml(t('nativeShare'))}</button><a class="ev-share-btn ev-share-btn--whatsapp" href="${safeUrl(sharePlatformUrl(item, 'whatsapp'))}" target="_blank" rel="noopener noreferrer">${escapeHtml(t('whatsapp'))}</a><a class="ev-share-btn ev-share-btn--facebook" href="${safeUrl(sharePlatformUrl(item, 'facebook'))}" target="_blank" rel="noopener noreferrer">${escapeHtml(t('facebook'))}</a><a class="ev-share-btn ev-share-btn--telegram" href="${safeUrl(sharePlatformUrl(item, 'telegram'))}" target="_blank" rel="noopener noreferrer">${escapeHtml(t('telegram'))}</a><a class="ev-share-btn ev-share-btn--x" href="${safeUrl(sharePlatformUrl(item, 'x'))}" target="_blank" rel="noopener noreferrer">${escapeHtml(t('x'))}</a><button class="ev-share-btn ev-share-btn--instagram" type="button" data-share="copy" data-id="${id}">${escapeHtml(t('instagram'))}</button><button class="ev-share-btn ev-share-btn--tiktok" type="button" data-share="copy" data-id="${id}">${escapeHtml(t('tiktok'))}</button><button class="ev-share-btn ev-share-btn--copy" type="button" data-share="copy" data-id="${id}">${escapeHtml(t('copyLink'))}</button></div></div>`;
   }
 
   function focusMarker(id) {
@@ -335,7 +413,6 @@
 
   function openFiltersDrawer() { document.documentElement.classList.add('filters-open'); ui.filtersOverlay.hidden = false; ui.filtersPanel.setAttribute('aria-hidden', 'false'); }
   function closeFiltersDrawer() { document.documentElement.classList.remove('filters-open'); ui.filtersOverlay.hidden = true; ui.filtersPanel.setAttribute('aria-hidden', 'true'); }
-  function toggleDesktopFilters() { state.filtersCollapsed = !state.filtersCollapsed; document.documentElement.classList.toggle('filters-collapsed', state.filtersCollapsed); ui.desktopFiltersToggle.textContent = state.filtersCollapsed ? t('showFilters') : t('hideFilters'); setTimeout(() => state.map && state.map.invalidateSize(), 150); }
 
   function groupByCoordinates(items) { const groups = new Map(); items.forEach((item) => { const key = `${item.lat.toFixed(5)},${item.lng.toFixed(5)}`; if (!groups.has(key)) groups.set(key, []); groups.get(key).push(item); }); return groups; }
   function offset(lat, lng, index, total) { if (total <= 1) return [lat, lng]; const radius = 35; const angle = (2 * Math.PI * index) / total; const metersPerDegreeLat = 111320; const metersPerDegreeLng = Math.max(1, metersPerDegreeLat * Math.cos(lat * Math.PI / 180)); return [lat + (Math.sin(angle) * radius) / metersPerDegreeLat, lng + (Math.cos(angle) * radius) / metersPerDegreeLng]; }
@@ -354,8 +431,8 @@
   function sum(field) { return state.filtered.reduce((total, item) => total + (Number(item[field]) || 0), 0); }
   function list(values) { return values.length ? values.join(state.language === 'ar' ? '، ' : ', ') : '—'; }
   function clean(value) { return String(value || '').toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/[\u064B-\u065F]/g, '').trim(); }
-  function formatNumber(value) { return new Intl.NumberFormat(state.language === 'ar' ? 'ar-SY' : 'en-US', { maximumFractionDigits: 0 }).format(Number(value) || 0); }
-  function formatDate(value) { const date = new Date(value); if (Number.isNaN(date.getTime())) return value; return new Intl.DateTimeFormat(state.language === 'ar' ? 'ar-SY' : 'en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(date); }
+  function formatNumber(value) { return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(Number(value) || 0); }
+  function formatDate(value) { const date = new Date(value); if (Number.isNaN(date.getTime())) return value; return new Intl.DateTimeFormat(state.language === 'ar' ? 'ar-SY-u-nu-latn' : 'en-GB', { year: 'numeric', month: 'long', day: 'numeric' }).format(date); }
   function showError(message) { ui.list.innerHTML = `<div class="ev-error">${escapeHtml(message)}</div>`; }
   function safeUrl(value) { return /^(https?:\/\/|#)/i.test(String(value)) ? escapeHtml(value) : '#'; }
   function escapeHtml(value) { return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;'); }
