@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Syrian EV Chargers Dataset",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "id",
+      "name_ar",
+      "governorate",
+      "latitude",
+      "longitude",
+      "connectors",
+      "power_kw",
+      "guns",
+      "status",
+      "source_name",
+      "source_date",
+      "data_quality"
+    ],
+    "properties": {
+      "id": { "type": "string", "description": "Stable unique ID, e.g. damascus-001" },
+      "name_ar": { "type": "string" },
+      "name_en": { "type": "string" },
+      "operator": { "type": "string" },
+      "governorate": { "type": "string" },
+      "city": { "type": "string" },
+      "address": { "type": "string" },
+      "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+      "longitude": { "type": "number", "minimum": -180, "maximum": 180 },
+      "connectors": {
+        "type": "array",
+        "items": { "type": "string", "examples": ["CCS2", "GBT", "Type2", "CHAdeMO"] }
+      },
+      "power_kw": { "type": "number", "minimum": 0 },
+      "guns": { "type": "integer", "minimum": 0 },
+      "status": {
+        "type": "string",
+        "enum": ["operational", "partially_operational", "planned", "under_construction", "unavailable", "unknown"]
+      },
+      "access": { "type": "string", "description": "Public/private/restricted/opening hours if known" },
+      "price_note": { "type": "string" },
+      "source_name": { "type": "string" },
+      "source_url": { "type": "string" },
+      "source_date": { "type": "string", "description": "YYYY-MM-DD preferred" },
+      "last_verified": { "type": "string", "description": "YYYY-MM-DD preferred" },
+      "data_quality": {
+        "type": "string",
+        "enum": ["Verified", "High Confidence", "Medium Confidence", "Low Confidence", "Estimated", "Unverified"]
+      },
+      "notes": { "type": "string" }
+    }
+  }
+}
