@@ -4,15 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>خريطة شواحن السيارات الكهربائية في سورية | Syrian Renewables</title>
-  <meta name="description" content="خريطة تفاعلية لتتبع مواقع شواحن السيارات الكهربائية في سورية، نوع المقبس، القدرة، الحالة، والمصدر." />
+  <meta name="description" content="خريطة تفاعلية محدثة لشواحن السيارات الكهربائية في سورية: المواقع، المشغلون، نوع المقبس، القدرة الاسمية، وعدد المخارج." />
   <meta name="theme-color" content="#217A8D" />
   <meta property="og:title" content="خريطة شواحن السيارات الكهربائية في سورية" />
   <meta property="og:description" content="أداة بيانات تفاعلية من Syrian Renewables لتتبع شواحن السيارات الكهربائية في سورية." />
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://unpkg.com" />
   <link rel="preconnect" href="https://tile.openstreetmap.org" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQflOVrF5P4EyWO6XxYBKOjpukbppXc=" crossorigin="" />
-  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQflOVrF5P4EyWOXxYBKOjpukbppXc=" crossorigin="" onerror="this.onerror=null;this.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css';" />
+  <link rel="stylesheet" href="assets/styles.v2.css" />
 </head>
 <body>
   <main class="ev-shell">
@@ -20,69 +20,54 @@
       <div class="ev-hero__content">
         <p class="ev-kicker">Syrian Renewables Data Tool</p>
         <h1 id="page-title">خريطة شواحن السيارات الكهربائية في سورية</h1>
-        <p class="ev-lead">أداة تفاعلية لتتبع مواقع الشواحن، نوع المقابس، القدرة، عدد المخارج، الحالة، وآخر تحديث متاح.</p>
+        <p class="ev-lead">أداة تفاعلية لعرض مواقع الشواحن، المشغلين، نوع المقبس، القدرة الاسمية، وعدد مخارج الشحن في كل موقع.</p>
+        <div class="ev-hero__meta">
+          <span id="lastUpdated">آخر تحديث للبيانات: جاري التحميل…</span>
+          <span>نوع المقبس المعروض: CCS2</span>
+        </div>
       </div>
-      <div class="ev-hero__badge" aria-label="بيانات قيد التحديث">
-        <span>EV</span>
-        <strong>Chargers Map</strong>
+      <div class="ev-hero__badge" aria-label="خريطة شواحن المركبات الكهربائية">
+        <span>⚡</span>
+        <strong>EV Chargers Map</strong>
       </div>
     </section>
 
     <section class="ev-panel" aria-label="فلاتر وإحصاءات الخريطة">
       <div class="ev-filters">
-        <label class="ev-field">
-          <span>بحث</span>
-          <input id="searchInput" type="search" placeholder="ابحث بالاسم، المدينة، المشغل أو نوع المقبس…" autocomplete="off" />
-        </label>
-        <label class="ev-field">
-          <span>المحافظة</span>
-          <select id="governorateFilter">
-            <option value="all">كل المحافظات</option>
-          </select>
-        </label>
-        <label class="ev-field">
-          <span>نوع المقبس</span>
-          <select id="connectorFilter">
-            <option value="all">كل المقابس</option>
-          </select>
-        </label>
-        <label class="ev-field">
-          <span>الحالة</span>
-          <select id="statusFilter">
-            <option value="all">كل الحالات</option>
-          </select>
-        </label>
+        <label class="ev-field ev-field--search"><span>بحث</span><input id="searchInput" type="search" placeholder="ابحث بالاسم، المدينة، المشغل أو نوع الموقع…" autocomplete="off" /></label>
+        <label class="ev-field"><span>المحافظة</span><select id="governorateFilter"><option value="all">كل المحافظات</option></select></label>
+        <label class="ev-field"><span>المشغل</span><select id="operatorFilter"><option value="all">كل المشغلين</option></select></label>
+        <label class="ev-field"><span>نوع المقبس</span><select id="connectorFilter"><option value="all">كل المقابس</option></select></label>
+        <label class="ev-field"><span>الحالة</span><select id="statusFilter"><option value="all">كل الحالات</option></select></label>
+        <label class="ev-field"><span>نوع الموقع</span><select id="siteTypeFilter"><option value="all">كل الأنواع</option></select></label>
         <button id="resetFilters" class="ev-button" type="button">إعادة ضبط</button>
       </div>
 
       <div class="ev-stats" aria-live="polite">
-        <article class="ev-stat"><span id="totalStations">0</span><small>محطة</small></article>
-        <article class="ev-stat"><span id="operationalStations">0</span><small>عاملة</small></article>
-        <article class="ev-stat"><span id="totalPower">0</span><small>kW قدرة موثقة</small></article>
+        <article class="ev-stat"><span id="totalLocations">0</span><small>موقع شحن</small></article>
+        <article class="ev-stat"><span id="totalChargers">0</span><small>شاحن</small></article>
+        <article class="ev-stat"><span id="totalGuns">0</span><small>مخرج شحن</small></article>
+        <article class="ev-stat"><span id="totalPower">0 kW</span><small>قدرة اسمية إجمالية</small></article>
         <article class="ev-stat"><span id="coveredGovernorates">0</span><small>محافظة</small></article>
       </div>
     </section>
 
     <section class="ev-layout">
-      <div class="ev-map-card">
-        <div id="map" class="ev-map" role="application" aria-label="خريطة شواحن السيارات الكهربائية في سورية"></div>
-      </div>
-      <aside class="ev-sidebar" aria-label="قائمة الشواحن">
-        <div class="ev-sidebar__header">
-          <h2>قائمة الشواحن</h2>
-          <p id="resultCount">لا توجد نتائج بعد.</p>
-        </div>
+      <div class="ev-map-card"><div id="map" class="ev-map" role="application" aria-label="خريطة شواحن السيارات الكهربائية في سورية"></div></div>
+      <aside class="ev-sidebar" aria-label="قائمة شواحن السيارات الكهربائية">
+        <div class="ev-sidebar__header"><h2>قائمة الشواحن</h2><p id="resultCount">جاري تحميل النتائج…</p></div>
         <div id="chargerList" class="ev-list"></div>
       </aside>
     </section>
 
-    <section class="ev-notes" aria-label="ملاحظات منهجية">
+    <section class="ev-notes" aria-label="ملاحظات منهجية حول البيانات">
       <h2>ملاحظات البيانات</h2>
-      <p>تُعرض البيانات كما هي متاحة في ملف <code>data/chargers.json</code>. يجب توثيق كل نقطة بمصدر وتاريخ مصدر وجودة بيانات قبل الاعتماد العلني.</p>
+      <p id="dataNote">تعرض الخريطة البيانات المتاحة مع توضيح جودة كل سجل وملاحظات التحقق عند الحاجة.</p>
+      <p>مواقع الشحن ذات الإحداثيات المتطابقة أو شبه المتطابقة تُعرض بإزاحة بصرية صغيرة حتى لا تختفي العلامات فوق بعضها، بينما تبقى الإحداثيات الأصلية محفوظة داخل ملف البيانات.</p>
     </section>
   </main>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <script src="assets/app.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js';"></script>
+  <script src="assets/app.v2.js" defer></script>
 </body>
 </html>
