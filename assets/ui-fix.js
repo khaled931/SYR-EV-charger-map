@@ -9,8 +9,8 @@
 
   function labels() {
     return isArabic()
-      ? { filters: 'الفلاتر', list: 'قائمة الشواحن', close: 'إغلاق' }
-      : { filters: 'Filters', list: 'Chargers list', close: 'Close' };
+      ? { list: 'قائمة الشواحن', close: 'إغلاق' }
+      : { list: 'Chargers list', close: 'Close' };
   }
 
   function ensureOverlay(id) {
@@ -59,26 +59,22 @@
   }
 
   function ensureFloatingControls() {
-    const mapCard = document.querySelector('.ev-map-card');
-    if (!mapCard) return false;
+    const layout = document.querySelector('.ev-layout');
+    if (!layout) return false;
 
     let controls = document.getElementById(CONTROLS_ID);
     if (!controls) {
       controls = document.createElement('div');
       controls.id = CONTROLS_ID;
-      controls.innerHTML = `
-        <button class="map-floating-button" id="mapFiltersButton" type="button"><span>☰</span><b data-floating-label="filters"></b></button>
-        <button class="map-floating-button" id="mapListButton" type="button"><span>⚡</span><b data-floating-label="list"></b></button>
-      `;
-      mapCard.appendChild(controls);
+      controls.innerHTML = '<button class="map-floating-button" id="mapListButton" type="button"><span>⚡</span><b data-floating-label="list"></b></button>';
     }
+    if (controls.parentElement !== layout) layout.appendChild(controls);
     syncFloatingLabels();
     return true;
   }
 
   function syncFloatingLabels() {
     const dict = labels();
-    document.querySelectorAll('[data-floating-label="filters"]').forEach((el) => { el.textContent = dict.filters; });
     document.querySelectorAll('[data-floating-label="list"]').forEach((el) => { el.textContent = dict.list; });
     document.querySelectorAll('[data-close-list]').forEach((el) => { el.setAttribute('aria-label', dict.close); });
   }
@@ -128,7 +124,7 @@
 
   function bindDrawer() {
     document.addEventListener('click', (event) => {
-      const filterButton = event.target.closest('#mobileFiltersToggle, #desktopFiltersToggle, #mapFiltersButton');
+      const filterButton = event.target.closest('#mobileFiltersToggle, #desktopFiltersToggle');
       const listButton = event.target.closest('#mapListButton');
       const filterClose = event.target.closest('#closeFiltersButton');
       const listClose = event.target.closest('[data-close-list]');
