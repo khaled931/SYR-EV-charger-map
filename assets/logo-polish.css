@@ -74,6 +74,22 @@ html[lang="en"] .ev-brand.sr-logo-link::after {
   background: var(--color-card) !important;
   box-shadow: var(--shadow-card) !important;
 }
+.ev-field--search input {
+  border-radius: var(--radius-pill) !important;
+}
+#resetFilters {
+  color: var(--color-primary-dark) !important;
+  background: var(--color-card) !important;
+  border: 1px solid var(--color-border) !important;
+}
+#resetFilters:hover,
+#resetFilters:focus-visible {
+  background: var(--color-hover-bg) !important;
+  border-color: var(--color-primary) !important;
+}
+.ev-field select {
+  border-radius: var(--radius-control) !important;
+}
 @media (max-width: 760px) {
   .ev-topbar {
     min-height: 62px !important;
