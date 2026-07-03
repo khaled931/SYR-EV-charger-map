@@ -14,14 +14,14 @@
   margin-top: 10px !important;
 }
 #mapFloatingControls {
-  position: absolute !important;
-  inset-block-start: 54px !important;
-  inset-inline-start: 14px !important;
-  z-index: 900 !important;
+  order: 2 !important;
+  position: static !important;
+  z-index: 1 !important;
   display: grid !important;
   gap: 8px !important;
-  width: min(245px, calc(100% - 28px)) !important;
-  pointer-events: none !important;
+  width: 100% !important;
+  margin-top: 10px !important;
+  pointer-events: auto !important;
 }
 .map-floating-button {
   pointer-events: auto !important;
@@ -30,6 +30,7 @@
   justify-content: space-between !important;
   gap: 10px !important;
   min-height: 44px !important;
+  width: min(100%, 430px) !important;
   padding: 0 14px !important;
   border: 1px solid var(--color-border) !important;
   border-radius: var(--radius-pill) !important;
@@ -40,6 +41,12 @@
   font-size: 13px !important;
   font-weight: 500 !important;
   transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease !important;
+}
+html[dir="rtl"] .map-floating-button {
+  margin-inline-start: auto !important;
+}
+html[dir="ltr"] .map-floating-button {
+  margin-inline-end: auto !important;
 }
 .map-floating-button:hover,
 .map-floating-button:focus-visible {
@@ -184,12 +191,11 @@ html.list-open .ev-sidebar {
   #filtersPanel { inset-inline-start: 8px !important; }
   .ev-sidebar { inset-inline-end: 8px !important; }
   #mapFloatingControls {
-    inset-block-start: 52px !important;
-    inset-inline-start: 10px !important;
-    width: min(220px, calc(100% - 20px)) !important;
+    margin-top: 8px !important;
   }
   .map-floating-button {
     min-height: 44px !important;
+    width: 100% !important;
     font-size: 12.5px !important;
     padding: 0 12px !important;
   }
