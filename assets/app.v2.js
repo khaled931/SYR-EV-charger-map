@@ -157,6 +157,10 @@
     window.addEventListener('resize', () => { if (state.map) setTimeout(() => state.map.invalidateSize(), 120); });
   }
 
+  function cssToken(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || 'currentColor';
+  }
+
   function requestUserLocation() {
     if (!navigator.geolocation || !state.map) return;
     navigator.geolocation.getCurrentPosition(
@@ -170,6 +174,7 @@
     const lat = position.coords.latitude;
     const lng = position.coords.longitude;
     const accuracy = Math.round(position.coords.accuracy || 0);
+    const locationColor = cssToken('--color-primary');
     state.userPosition = [lat, lng];
 
     if (state.userMarker) state.userMarker.remove();
@@ -177,8 +182,8 @@
 
     state.userAccuracyCircle = L.circle([lat, lng], {
       radius: accuracy || 50,
-      color: '#217A8D',
-      fillColor: '#217A8D',
+      color: locationColor,
+      fillColor: locationColor,
       fillOpacity: 0.08,
       weight: 1
     }).addTo(state.map);
