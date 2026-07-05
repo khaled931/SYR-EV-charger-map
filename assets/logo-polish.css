@@ -1,109 +1,94 @@
 .ev-topbar {
   min-height: 68px !important;
   padding: 8px 16px !important;
-  background: linear-gradient(135deg, rgba(255,255,255,.78), rgba(255,255,255,.50)) !important;
-  border-bottom: 1px solid rgba(33,122,141,.18) !important;
-  box-shadow: 0 12px 34px rgba(35,43,43,.10) !important;
-  backdrop-filter: blur(24px) saturate(1.22) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(1.22) !important;
-}
-html[data-theme="dark"] .ev-topbar {
-  background: linear-gradient(135deg, rgba(12,34,40,.86), rgba(12,34,40,.58)) !important;
-  border-bottom-color: rgba(160,220,230,.16) !important;
+  background: var(--color-card) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  box-shadow: var(--shadow-card) !important;
 }
 .ev-brand.sr-logo-link {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 10px !important;
-  width: auto !important;
-  min-width: 168px !important;
-  max-width: 230px !important;
-  height: 54px !important;
+  inline-size: auto !important;
+  min-inline-size: 168px !important;
+  max-inline-size: 230px !important;
+  block-size: 54px !important;
   padding: 6px 12px !important;
-  border: 1px solid rgba(33,122,141,.18) !important;
-  border-radius: 18px !important;
-  background: radial-gradient(circle at 25% 15%, rgba(255,255,255,.96), rgba(255,255,255,.64)) !important;
-  box-shadow: 0 14px 32px rgba(35,43,43,.11) !important;
-  backdrop-filter: blur(18px) saturate(1.20) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(1.20) !important;
-  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-card) !important;
+  background: var(--color-card) !important;
+  box-shadow: var(--shadow-card) !important;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease !important;
   text-decoration: none !important;
-}
-html[data-theme="dark"] .ev-brand.sr-logo-link {
-  background: radial-gradient(circle at 25% 15%, rgba(30,65,72,.95), rgba(16,40,47,.66)) !important;
 }
 .ev-brand.sr-logo-link:hover,
 .ev-brand.sr-logo-link:focus-visible {
-  transform: translateY(-1px) !important;
-  border-color: rgba(33,122,141,.42) !important;
-  box-shadow: 0 18px 42px rgba(35,43,43,.16) !important;
+  border-color: var(--color-primary) !important;
+  background: var(--color-hover-bg) !important;
+  text-decoration: none !important;
   outline: none !important;
 }
 .sr-logo-img {
   display: block !important;
-  width: 58px !important;
-  height: 44px !important;
+  inline-size: 58px !important;
+  block-size: 44px !important;
   object-fit: contain !important;
   flex: 0 0 auto !important;
 }
 .ev-brand.sr-logo-link::after {
   content: 'الصفحة الرئيسية' !important;
   display: inline-block !important;
-  color: #145665 !important;
+  color: var(--color-primary-dark) !important;
   font-size: 13px !important;
-  font-weight: 900 !important;
+  font-weight: 500 !important;
   line-height: 1.3 !important;
   white-space: nowrap !important;
 }
 html[lang="en"] .ev-brand.sr-logo-link::after {
   content: 'Home page' !important;
 }
-html[data-theme="dark"] .ev-brand.sr-logo-link::after {
-  color: #D8F9FF !important;
-}
 .ev-map-card,
 .ev-panel,
 .ev-notes,
 .ev-sidebar,
 #filtersPanel {
-  border-color: rgba(33,122,141,.18) !important;
-  background: linear-gradient(145deg, rgba(255,255,255,.76), rgba(255,255,255,.48)) !important;
-  box-shadow: 0 22px 64px rgba(35,43,43,.12) !important;
-  backdrop-filter: blur(22px) saturate(1.22) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(1.22) !important;
-}
-html[data-theme="dark"] .ev-map-card,
-html[data-theme="dark"] .ev-panel,
-html[data-theme="dark"] .ev-notes,
-html[data-theme="dark"] .ev-sidebar,
-html[data-theme="dark"] #filtersPanel {
-  background: linear-gradient(145deg, rgba(18,46,54,.82), rgba(14,34,40,.58)) !important;
-  border-color: rgba(160,220,230,.16) !important;
+  border-color: var(--color-border) !important;
+  background: var(--color-card) !important;
+  box-shadow: var(--shadow-card) !important;
 }
 .map-floating-button,
 .ev-icon-button,
 .ev-button--small {
-  border-color: rgba(33,122,141,.22) !important;
-  background: linear-gradient(135deg, rgba(255,255,255,.86), rgba(255,255,255,.60)) !important;
-  box-shadow: 0 14px 34px rgba(35,43,43,.12) !important;
-  backdrop-filter: blur(18px) saturate(1.18) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(1.18) !important;
+  border-color: var(--color-border) !important;
+  background: var(--color-card) !important;
+  box-shadow: var(--shadow-card) !important;
 }
-html[data-theme="dark"] .map-floating-button,
-html[data-theme="dark"] .ev-icon-button,
-html[data-theme="dark"] .ev-button--small {
-  background: linear-gradient(135deg, rgba(22,52,60,.88), rgba(14,34,40,.64)) !important;
+.map-floating-button:hover,
+.ev-icon-button:hover,
+.ev-button--small:hover {
+  background: var(--color-hover-bg) !important;
 }
 .ev-card,
 .ev-stat {
-  background: linear-gradient(145deg, rgba(255,255,255,.78), rgba(255,255,255,.52)) !important;
-  backdrop-filter: blur(18px) saturate(1.18) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(1.18) !important;
+  background: var(--color-card) !important;
+  box-shadow: var(--shadow-card) !important;
 }
-html[data-theme="dark"] .ev-card,
-html[data-theme="dark"] .ev-stat {
-  background: linear-gradient(145deg, rgba(18,46,54,.78), rgba(14,34,40,.52)) !important;
+.ev-field--search input {
+  border-radius: var(--radius-pill) !important;
+}
+#resetFilters {
+  color: var(--color-primary-dark) !important;
+  background: var(--color-card) !important;
+  border: 1px solid var(--color-border) !important;
+}
+#resetFilters:hover,
+#resetFilters:focus-visible {
+  background: var(--color-hover-bg) !important;
+  border-color: var(--color-primary) !important;
+}
+.ev-field select {
+  border-radius: var(--radius-control) !important;
 }
 @media (max-width: 760px) {
   .ev-topbar {
@@ -111,16 +96,15 @@ html[data-theme="dark"] .ev-stat {
     padding: 7px 10px !important;
   }
   .ev-brand.sr-logo-link {
-    min-width: 132px !important;
-    max-width: 160px !important;
-    height: 46px !important;
+    min-inline-size: 132px !important;
+    max-inline-size: 160px !important;
+    block-size: 46px !important;
     gap: 7px !important;
     padding: 4px 8px !important;
-    border-radius: 16px !important;
   }
   .sr-logo-img {
-    width: 44px !important;
-    height: 38px !important;
+    inline-size: 44px !important;
+    block-size: 38px !important;
   }
   .ev-brand.sr-logo-link::after {
     font-size: 11px !important;
@@ -128,12 +112,12 @@ html[data-theme="dark"] .ev-stat {
 }
 @media (max-width: 420px) {
   .ev-brand.sr-logo-link {
-    min-width: 116px !important;
-    max-width: 138px !important;
+    min-inline-size: 116px !important;
+    max-inline-size: 138px !important;
   }
   .sr-logo-img {
-    width: 38px !important;
-    height: 34px !important;
+    inline-size: 38px !important;
+    block-size: 34px !important;
   }
   .ev-brand.sr-logo-link::after {
     font-size: 10px !important;
