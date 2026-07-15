@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <title>إدارة خريطة شواحن السيارات الكهربائية</title>
+  <link rel="stylesheet" href="admin.css?v=20260715-1" />
+</head>
+<body>
+  <main class="admin-shell">
+    <section id="loginView" class="login-card" aria-labelledby="loginTitle">
+      <img class="brand-logo" src="../assets/sr-logo.svg" alt="Syrian Renewables" />
+      <p class="eyebrow">Syrian Renewables · Secure Administration</p>
+      <h1 id="loginTitle">لوحة إدارة خريطة الشواحن</h1>
+      <p class="muted">هذه الصفحة غير مرتبطة بالواجهة العامة. الدخول متاح فقط لحسابات الإدارة المعتمدة.</p>
+      <form id="loginForm" class="stack" autocomplete="on">
+        <label class="field">
+          <span>البريد الإلكتروني <small>Email</small></span>
+          <input id="loginEmail" type="email" autocomplete="username" required />
+        </label>
+        <label class="field">
+          <span>كلمة المرور <small>Password</small></span>
+          <input id="loginPassword" type="password" autocomplete="current-password" minlength="8" required />
+        </label>
+        <button class="button button--primary" type="submit">تسجيل الدخول</button>
+      </form>
+      <p id="loginMessage" class="message" role="status" aria-live="polite"></p>
+    </section>
+
+    <section id="dashboardView" class="dashboard" hidden>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">EV Charger Map Administration</p>
+          <h1>إدارة بيانات الشواحن</h1>
+          <p id="adminIdentity" class="muted"></p>
+        </div>
+        <div class="topbar__actions">
+          <button id="refreshButton" class="button button--secondary" type="button">تحديث البيانات</button>
+          <button id="logoutButton" class="button button--danger-ghost" type="button">تسجيل الخروج</button>
+        </div>
+      </header>
+
+      <section class="stats-grid" aria-label="ملخص البيانات">
+        <article class="stat"><strong id="recordCount">0</strong><span>إجمالي السجلات</span></article>
+        <article class="stat"><strong id="publishedCount">0</strong><span>سجلات منشورة</span></article>
+        <article class="stat"><strong id="governorateCount">0</strong><span>محافظات</span></article>
+        <article class="stat"><strong id="companyCount">0</strong><span>شركات</span></article>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head">
+          <div>
+            <h2 id="formTitle">إضافة موقع شحن جديد</h2>
+            <p>الحقول العربية والإنجليزية إلزامية. تُستخرج الإحداثيات تلقائياً من رابط Google Maps عندما يكون ذلك ممكناً.</p>
+          </div>
+          <button id="resetFormButton" class="button button--secondary" type="button">نموذج جديد</button>
+        </div>
+
+        <form id="chargerForm" class="charger-form" novalidate>
+          <input id="editingId" type="hidden" />
+          <div class="form-grid form-grid--three">
+            <label class="field">
+              <span>المعرّف المقترح <small>Suggested_ID</small></span>
+              <input name="suggested_id" type="text" pattern="[A-Za-z0-9][A-Za-z0-9_-]{2,89}" placeholder="SY-DI-DAM-SITE-001" required />
+            </label>
+            <label class="field">
+              <span>عدد الشواحن <small>Charger numbers</small></span>
+              <input name="charger_numbers" type="number" min="1" max="200" step="1" required />
+            </label>
+            <label class="field field--checkbox">
+              <input name="published" type="checkbox" checked />
+              <span>نشر السجل للعامة <small>Published</small></span>
+            </label>
+          </div>
+
+          <div class="bilingual-grid">
+            <label class="field"><span>الشركة بالعربية <small>Company AR</small></span><input name="company_ar" type="text" required /></label>
+            <label class="field" dir="ltr"><span>Company in English <small>Company EN</small></span><input name="company_en" type="text" required /></label>
+            <label class="field"><span>المحافظة بالعربية <small>Governorate AR</small></span><input name="governorate_ar" type="text" required /></label>
+            <label class="field" dir="ltr"><span>Governorate in English <small>Governorate EN</small></span><input name="governorate_en" type="text" required /></label>
+            <label class="field"><span>المدينة بالعربية <small>City AR</small></span><input name="city_ar" type="text" required /></label>
+            <label class="field" dir="ltr"><span>City in English <small>City EN</small></span><input name="city_en" type="text" required /></label>
+            <label class="field"><span>اسم الموقع بالعربية <small>Site_Name_(POI) AR</small></span><input name="site_name_ar" type="text" required /></label>
+            <label class="field" dir="ltr"><span>Site name in English <small>Site_Name_(POI) EN</small></span><input name="site_name_en" type="text" required /></label>
+            <label class="field"><span>نوع الشاحن بالعربية <small>Charger type AR</small></span><input name="charger_type_ar" type="text" placeholder="صيني / أوروبي" required /></label>
+            <label class="field" dir="ltr"><span>Charger type in English <small>Charger type EN</small></span><input name="charger_type_en" type="text" placeholder="GB/T / CCS2" required /></label>
+            <label class="field"><span>نوع الموقع بالعربية <small>Site_Type AR</small></span><input name="site_type_ar" type="text" placeholder="مركز تجاري" required /></label>
+            <label class="field" dir="ltr"><span>Site type in English <small>Site_Type EN</small></span><input name="site_type_en" type="text" placeholder="Shopping mall" required /></label>
+          </div>
+
+          <div class="maps-row">
+            <label class="field field--grow">
+              <span>رابط خرائط Google <small>Google_Maps_URL</small></span>
+              <input name="google_maps_url" type="url" inputmode="url" dir="ltr" placeholder="https://maps.app.goo.gl/..." required />
+            </label>
+            <button id="resolveMapsButton" class="button button--secondary" type="button">استخراج الإحداثيات</button>
+          </div>
+          <p id="mapsMessage" class="message message--inline" role="status" aria-live="polite"></p>
+
+          <div id="coordinatesFields" class="form-grid form-grid--two coordinates">
+            <label class="field"><span>خط العرض <small>Latitude</small></span><input name="latitude" type="number" min="32" max="38" step="any" required /></label>
+            <label class="field"><span>خط الطول <small>Longitude</small></span><input name="longitude" type="number" min="35" max="43" step="any" required /></label>
+          </div>
+
+          <div class="form-actions">
+            <button id="saveButton" class="button button--primary" type="submit">حفظ ونشر السجل</button>
+            <button id="cancelEditButton" class="button button--secondary" type="button" hidden>إلغاء التعديل</button>
+          </div>
+          <p id="formMessage" class="message" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head">
+          <div>
+            <h2>استيراد وتصدير البيانات</h2>
+            <p>يدعم Excel وCSV وJSON. تتم معاينة الأخطاء والتحقق من الإحداثيات قبل الكتابة إلى قاعدة البيانات.</p>
+          </div>
+        </div>
+        <div class="import-grid">
+          <div class="import-box">
+            <label class="field">
+              <span>ملف البيانات <small>.xlsx, .xls, .csv, .json</small></span>
+              <input id="importFile" type="file" accept=".xlsx,.xls,.csv,.json,application/json,text/csv" />
+            </label>
+            <label class="field">
+              <span>طريقة الاستيراد</span>
+              <select id="importMode">
+                <option value="insert">إضافة سجلات جديدة فقط</option>
+                <option value="upsert">إضافة أو تحديث حسب Suggested_ID</option>
+              </select>
+            </label>
+            <div class="button-row">
+              <button id="previewImportButton" class="button button--secondary" type="button">قراءة ومعاينة الملف</button>
+              <button id="commitImportButton" class="button button--primary" type="button" disabled>تنفيذ الاستيراد</button>
+              <button id="downloadTemplateButton" class="button button--ghost" type="button">تنزيل قالب Excel</button>
+            </div>
+            <p id="importMessage" class="message" role="status" aria-live="polite"></p>
+          </div>
+          <div class="export-box">
+            <h3>تصدير النسخة الحالية</h3>
+            <div class="button-row">
+              <button id="exportXlsxButton" class="button button--secondary" type="button">Excel</button>
+              <button id="exportCsvButton" class="button button--secondary" type="button">CSV</button>
+              <button id="exportJsonButton" class="button button--secondary" type="button">JSON</button>
+            </div>
+            <p class="muted">يحتوي التصدير على الحقول الثنائية والإحداثيات وحالة النشر.</p>
+          </div>
+        </div>
+        <div id="importPreview" class="table-wrap" hidden></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel__head panel__head--records">
+          <div>
+            <h2>سجلات الشواحن</h2>
+            <p>يمكن تعديل أو حذف أي سجل. الحذف نهائي ويتطلب تأكيداً.</p>
+          </div>
+          <label class="field search-field">
+            <span>بحث</span>
+            <input id="recordsSearch" type="search" placeholder="المعرّف، الشركة، الموقع، المحافظة…" />
+          </label>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Suggested_ID</th>
+                <th>الموقع</th>
+                <th>الشركة</th>
+                <th>المحافظة</th>
+                <th>النوع</th>
+                <th>العدد</th>
+                <th>النشر</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="recordsTableBody"></tbody>
+          </table>
+        </div>
+        <p id="recordsMessage" class="message" role="status" aria-live="polite"></p>
+      </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script type="module" src="admin.js?v=20260715-1"></script>
+</body>
+</html>
