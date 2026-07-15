@@ -1,0 +1,16 @@
+{
+  "name": "syr-ev-charger-map",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Syrian Renewables EV charger map with a protected Firebase administration layer.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check api/chargers.js && node --check api/firebase-config.js && node --check api/admin/chargers.js && node --check api/admin/resolve-maps.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}
