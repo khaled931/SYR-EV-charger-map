@@ -21,6 +21,31 @@
       ]
     },
     {
+      "source": "/admin",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=()"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' https://www.gstatic.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://*.googleapis.com; font-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+        }
+      ]
+    },
+    {
       "source": "/admin/(.*)",
       "headers": [
         {
@@ -30,6 +55,10 @@
         {
           "key": "X-Frame-Options",
           "value": "DENY"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
         },
         {
           "key": "Permissions-Policy",
@@ -65,6 +94,14 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/admin.css",
+      "destination": "/admin/admin.css"
+    },
+    {
+      "source": "/admin.js",
+      "destination": "/admin/admin.js"
+    },
     {
       "source": "/data/chargers.v2.json",
       "destination": "/api/chargers"
