@@ -29,6 +29,9 @@ test('unified shell and EV map work on the Vercel Preview', async ({ page }) => 
   await page.locator('#resetFilters').click();
   await expect.poll(() => cards.count()).toBe(initialCardCount);
 
+  const closeFilters = page.locator('#closeFiltersButton');
+  if (await closeFilters.isVisible()) await closeFilters.click();
+
   const mobileMenu = page.locator('.sr-menu-button');
   if (await mobileMenu.isVisible()) {
     await mobileMenu.click();
