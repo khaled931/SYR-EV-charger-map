@@ -1,28 +1,30 @@
-name: Validate EV Charger Map
+name: EV Charger Map CI
 
 on:
   pull_request:
+    branches: [main]
   push:
-    branches:
-      - main
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
-  test:
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
-      - name: Use Node.js 24
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 20
+          cache: npm
+
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
-      - name: Check JavaScript syntax
-        run: npm run check
-      - name: Run tests
-        run: npm test
+        run: npm ci --no-audit --no-fund
+
+      - name: Run syntax and regression checks
+        run: npm run verify
