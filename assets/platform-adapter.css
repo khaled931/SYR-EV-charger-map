@@ -1,0 +1,258 @@
+/* EV-map compatibility layer for the canonical Syrian Renewables platform shell. */
+:root {
+  --sr-primary-dark: var(--sr-primary-strong);
+  --sr-soft: var(--sr-surface-soft);
+  --sr-text: var(--sr-ink);
+  --sr-bg: var(--sr-surface-soft);
+  --sr-card: color-mix(in srgb, var(--sr-surface-raised) 88%, transparent);
+  --sr-card-solid: var(--sr-surface-raised);
+  --sr-glass: blur(18px) saturate(1.08);
+}
+
+html[lang='ar'] {
+  --sr-font: var(--sr-font-arabic) !important;
+}
+
+html[lang='en'] {
+  --sr-font: var(--sr-font-latin) !important;
+}
+
+body {
+  color: var(--sr-ink);
+  background:
+    radial-gradient(circle at 18% 0%, color-mix(in srgb, var(--sr-primary) 14%, transparent), transparent 28%),
+    linear-gradient(180deg, var(--sr-surface) 0%, var(--sr-surface-soft) 100%);
+  font-family: var(--sr-font) !important;
+}
+
+html[data-theme='dark'] body {
+  background:
+    radial-gradient(circle at 20% 0%, color-mix(in srgb, var(--sr-primary) 18%, transparent), transparent 28%),
+    linear-gradient(180deg, var(--sr-surface) 0%, var(--sr-surface-soft) 100%);
+}
+
+.ev-app,
+.ev-app *,
+.leaflet-container,
+.leaflet-container * {
+  font-family: var(--sr-font) !important;
+}
+
+.ev-legacy-controls {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.ev-shell {
+  width: min(var(--sr-shell-width), 100%);
+  padding: 12px 16px 22px;
+}
+
+.ev-map-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: min(var(--sr-shell-width), calc(100% - 32px));
+  margin: 16px auto 0;
+  padding: 12px 14px;
+  border: 1px solid var(--sr-border);
+  border-radius: var(--sr-radius);
+  background: color-mix(in srgb, var(--sr-surface-raised) 90%, transparent);
+  box-shadow: 0 12px 32px rgba(21, 69, 76, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.ev-map-tools__title {
+  min-width: 0;
+}
+
+.ev-map-tools__title p {
+  margin: 0;
+  color: var(--sr-primary);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.ev-map-tools__title h1 {
+  margin: 2px 0 0;
+  color: var(--sr-ink);
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  line-height: 1.45;
+}
+
+.ev-map-tools__actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.ev-map-tools .ev-icon-button {
+  color: var(--sr-ink);
+  background: var(--sr-surface-raised);
+  border-color: var(--sr-border);
+}
+
+.ev-map-tools .ev-icon-button:hover,
+.ev-map-tools .ev-icon-button:focus-visible {
+  background: var(--sr-surface-soft);
+  border-color: color-mix(in srgb, var(--sr-primary) 50%, var(--sr-border));
+}
+
+.ev-layout {
+  margin-top: 12px;
+}
+
+.ev-map-card,
+.ev-sidebar,
+.ev-panel,
+.ev-notes {
+  border-color: var(--sr-border);
+  border-radius: var(--sr-radius);
+  background: color-mix(in srgb, var(--sr-surface-raised) 90%, transparent);
+  box-shadow: 0 14px 38px rgba(21, 69, 76, 0.09);
+}
+
+.ev-panel {
+  background: color-mix(in srgb, var(--sr-surface-raised) 82%, transparent);
+}
+
+.ev-card,
+.ev-stat {
+  background: color-mix(in srgb, var(--sr-surface-raised) 86%, transparent);
+}
+
+html[data-theme='dark'] .ev-card,
+html[data-theme='dark'] .ev-stat,
+html[data-theme='dark'] .ev-panel {
+  background: color-mix(in srgb, var(--sr-surface-raised) 88%, transparent);
+}
+
+.ev-sidebar__header h2,
+.ev-notes h2,
+.ev-filters-panel__head,
+.ev-popup h3,
+.ev-source,
+.ev-chip {
+  color: var(--sr-primary-strong);
+}
+
+html[data-theme='dark'] .ev-sidebar__header h2,
+html[data-theme='dark'] .ev-notes h2,
+html[data-theme='dark'] .ev-filters-panel__head,
+html[data-theme='dark'] .ev-popup h3,
+html[data-theme='dark'] .ev-source,
+html[data-theme='dark'] .ev-chip {
+  color: #d8f9ff;
+}
+
+.ev-field input,
+.ev-field select,
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  color: var(--sr-ink);
+  background: var(--sr-surface-raised);
+  border-color: var(--sr-border);
+}
+
+.ev-filters-panel {
+  top: 92px !important;
+  background: color-mix(in srgb, var(--sr-surface-raised) 96%, transparent);
+}
+
+.ev-map {
+  height: calc(100vh - 230px);
+  min-height: 560px;
+}
+
+.ev-sidebar {
+  max-height: calc(100vh - 188px);
+}
+
+#platformFooter .sr-site-footer {
+  margin-top: 54px;
+}
+
+@media (max-width: 980px) {
+  .ev-map-tools {
+    width: min(100% - 22px, var(--sr-shell-width));
+    margin-top: 12px;
+  }
+
+  .ev-map {
+    height: 58vh;
+    min-height: 500px;
+  }
+
+  .ev-sidebar {
+    max-height: none;
+  }
+}
+
+@media (max-width: 759px) {
+  .ev-shell {
+    padding: 8px;
+  }
+
+  .ev-map-tools {
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 18px;
+  }
+
+  .ev-map-tools__title p {
+    font-size: 0.68rem;
+  }
+
+  .ev-map-tools__title h1 {
+    font-size: 1rem;
+  }
+
+  .ev-map-tools__actions {
+    gap: 5px;
+  }
+
+  .ev-map-tools .ev-icon-button {
+    min-width: 36px;
+    height: 36px;
+    border-radius: 12px;
+  }
+
+  .ev-filters-panel {
+    top: 8px !important;
+  }
+
+  .ev-map {
+    height: calc(100vh - 210px);
+    min-height: 430px;
+  }
+}
+
+@media (max-width: 470px) {
+  .ev-map-tools__title p {
+    display: none;
+  }
+
+  .ev-map-tools__title h1 {
+    font-size: 0.9rem;
+  }
+
+  .ev-map-tools .ev-icon-button--menu {
+    width: 36px;
+    min-width: 36px;
+  }
+
+  .ev-map-tools .ev-icon-button--menu::after {
+    display: none;
+  }
+}

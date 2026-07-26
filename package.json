@@ -4,13 +4,18 @@
   "private": true,
   "description": "Syrian Renewables EV charger map with a protected Firebase administration layer.",
   "engines": {
-    "node": "20.x"
+    "node": ">=20"
   },
   "scripts": {
-    "test": "node --test",
-    "check": "node --check api/chargers.js && node --check api/firebase-config.js && node --check api/_lib/seed.js && node --check api/admin/chargers.js && node --check api/admin/resolve-maps.js"
+    "test": "node --test tests/platform-shell.test.js",
+    "test:e2e": "playwright test",
+    "check": "node --check api/chargers.js && node --check api/firebase-config.js && node --check api/_lib/seed.js && node --check api/admin/chargers.js && node --check api/admin/resolve-maps.js && node --check assets/app.v2.js && npm test",
+    "verify": "npm run check"
   },
   "dependencies": {
     "firebase-admin": "^13.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "latest"
   }
 }
