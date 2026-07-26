@@ -12,7 +12,9 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 22
+    env:
+      E2E_BASE_URL: ${{ github.event_name == 'pull_request' && 'https://syr-ev-charger-map-git-feat-uni-864594-jakobs-projects-4907a85c.vercel.app' || 'https://ev.syrianrenewables.com' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -27,3 +29,23 @@ jobs:
 
       - name: Run syntax and regression checks
         run: npm run verify
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Wait for deployment
+        run: curl --fail --silent --show-error --location --retry 18 --retry-all-errors --retry-delay 5 "$E2E_BASE_URL/" > /dev/null
+
+      - name: Verify desktop and mobile preview
+        run: npm run test:e2e
+
+      - name: Upload browser verification artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ev-map-browser-verification
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore
+          retention-days: 7
