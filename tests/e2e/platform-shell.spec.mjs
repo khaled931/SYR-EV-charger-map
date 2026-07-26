@@ -8,6 +8,27 @@ test('unified shell and EV map work on the Vercel Preview', async ({ page }) => 
   await expect(page.locator('#map')).toBeVisible();
   await expect(page.locator('#chargerList .ev-card').first()).toBeVisible({ timeout: 25_000 });
 
+  const cards = page.locator('#chargerList .ev-card');
+  const initialCardCount = await cards.count();
+  expect(initialCardCount).toBeGreaterThan(1);
+
+  const search = page.locator('#searchInput');
+  if (!(await search.isVisible())) await page.locator('#mobileFiltersToggle').click();
+  await expect(search).toBeVisible();
+  await search.fill('حلب');
+  await expect.poll(() => cards.count()).toBeLessThan(initialCardCount);
+  expect(await cards.count()).toBeGreaterThan(0);
+  await search.fill('');
+  await expect.poll(() => cards.count()).toBe(initialCardCount);
+
+  const governorateFilter = page.locator('#governorateFilter');
+  const governorateValues = await governorateFilter.locator('option').evaluateAll((options) => options.map((option) => option.value));
+  expect(governorateValues.length).toBeGreaterThan(1);
+  await governorateFilter.selectOption(governorateValues[1]);
+  await expect.poll(() => cards.count()).toBeLessThan(initialCardCount);
+  await page.locator('#resetFilters').click();
+  await expect.poll(() => cards.count()).toBe(initialCardCount);
+
   const mobileMenu = page.locator('.sr-menu-button');
   if (await mobileMenu.isVisible()) {
     await mobileMenu.click();
@@ -38,8 +59,6 @@ test('unified shell and EV map work on the Vercel Preview', async ({ page }) => 
   await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
   await expect(page.locator('#platformHeader .sr-main-nav a[href$="/en/news"]')).toHaveAttribute('href', /\/en\/news$/);
 
-  await expect(page.locator('#searchInput')).toBeVisible();
-  await expect(page.locator('#governorateFilter')).toBeVisible();
   await expect(page.locator('#fitMapButton')).toBeVisible();
 });
 
@@ -52,5 +71,8 @@ test('public API and protected admin entry remain available', async ({ request }
 
   const admin = await request.get('/admin/');
   expect(admin.ok()).toBeTruthy();
-  expect(await admin.text()).toContain('id="loginForm"');
+  const adminHtml = await admin.text();
+  expect(adminHtml).toContain('id="loginForm"');
+  expect(adminHtml).toContain('id="importFile"');
+  expect(adminHtml).toContain('id="exportXlsxButton"');
 });
