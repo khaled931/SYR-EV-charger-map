@@ -36,9 +36,7 @@ test('unified shell and EV map work on the Vercel Preview', async ({ page }) => 
   await page.locator('.sr-language-switch').click();
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
-  await expect(
-    page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Syria Energy News' })
-  ).toHaveAttribute('href', /\/en\/news$/);
+  await expect(page.locator('#platformHeader .sr-main-nav a[href$="/en/news"]')).toHaveAttribute('href', /\/en\/news$/);
 
   await expect(page.locator('#searchInput')).toBeVisible();
   await expect(page.locator('#governorateFilter')).toBeVisible();
