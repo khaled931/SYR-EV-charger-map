@@ -4,7 +4,7 @@
   "private": true,
   "description": "Syrian Renewables EV charger map with a protected Firebase administration layer.",
   "engines": {
-    "node": "20.x"
+    "node": ">=20"
   },
   "scripts": {
     "test": "node --test",
