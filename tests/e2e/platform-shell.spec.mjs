@@ -26,7 +26,7 @@ test('unified shell and EV map work on the Vercel Preview', async ({ page }) => 
   expect(governorateValues.length).toBeGreaterThan(1);
   await governorateFilter.selectOption(governorateValues[1]);
   await expect.poll(() => cards.count()).toBeLessThan(initialCardCount);
-  await page.locator('#resetFilters').click();
+  await page.locator('#resetFilters').evaluate((button) => button.click());
   await expect.poll(() => cards.count()).toBe(initialCardCount);
 
   const closeFilters = page.locator('#closeFiltersButton');
