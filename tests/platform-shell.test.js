@@ -18,10 +18,11 @@ test('public page mounts the canonical header and footer without removing EV con
   assert.doesNotMatch(html, /href=["']https:\/\/syrianrenewables\.com\/?["']/i);
 });
 
-test('main-site links are locale-aware and news stays on the new Sanity website', () => {
+test('main-site links are locale-aware and news stays on the official platform', () => {
   const shell = read('platform-shell.js');
   const integration = read('platform-integration.js');
-  assert.match(integration, /https:\/\/syrian-renewables-web\.vercel\.app/);
+  assert.match(integration, /https:\/\/www\.syrian-renewables\.com/);
+  assert.doesNotMatch(integration, /https:\/\/syrian-renewables-web\.vercel\.app/);
   assert.match(shell, /_key: 'news', href: '\/news'/);
   assert.match(shell, /\$\{cleanBase\(mainSiteUrl\)\}\/\$\{locale\}\$\{suffix\}/);
   assert.doesNotMatch(shell, /legacyWordPressSite|https:\/\/syrianrenewables\.com/);
