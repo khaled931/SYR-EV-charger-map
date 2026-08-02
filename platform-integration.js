@@ -1,6 +1,6 @@
 import { mountPlatformShell } from './platform-shell.js';
 
-const FALLBACK_MAIN_SITE_URL = 'https://syrian-renewables-web.vercel.app';
+const FALLBACK_MAIN_SITE_URL = 'https://www.syrian-renewables.com';
 const configuredMainSite = window.SR_PLATFORM_MAIN_SITE_URL
   || document.querySelector('meta[name="sr-platform-main-site"]')?.content
   || FALLBACK_MAIN_SITE_URL;
