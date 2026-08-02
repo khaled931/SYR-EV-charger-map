@@ -1,10 +1,23 @@
 import { mountPlatformShell } from './platform-shell.js';
 
 const FALLBACK_MAIN_SITE_URL = 'https://www.syrian-renewables.com';
+const OBSOLETE_MAIN_SITE_HOST = 'syrian-renewables-web.vercel.app';
+
+function resolveMainSiteUrl(value) {
+  const configured = String(value || '').trim();
+  if (!configured) return FALLBACK_MAIN_SITE_URL;
+  try {
+    const parsed = new URL(configured);
+    if (parsed.hostname.toLowerCase() === OBSOLETE_MAIN_SITE_HOST) return FALLBACK_MAIN_SITE_URL;
+    return configured.replace(/\/+$/, '');
+  } catch {
+    return FALLBACK_MAIN_SITE_URL;
+  }
+}
+
 const configuredMainSite = window.SR_PLATFORM_MAIN_SITE_URL
-  || document.querySelector('meta[name="sr-platform-main-site"]')?.content
-  || FALLBACK_MAIN_SITE_URL;
-const MAIN_SITE_URL = String(configuredMainSite).replace(/\/+$/, '');
+  || document.querySelector('meta[name="sr-platform-main-site"]')?.content;
+const MAIN_SITE_URL = resolveMainSiteUrl(configuredMainSite);
 const LOGO_SRC = `${MAIN_SITE_URL}/brand/syrian-renewables-logo-fixed.svg`;
 const LANG_KEY = 'sr-ev-language';
 const SHARED_THEME_KEY = 'sr-theme';
