@@ -1,14 +1,13 @@
 import { mountPlatformShell } from './platform-shell.js';
 
 const FALLBACK_MAIN_SITE_URL = 'https://www.syrian-renewables.com';
-const OBSOLETE_MAIN_SITE_HOST = 'syrian-renewables-web.vercel.app';
 
 function resolveMainSiteUrl(value) {
   const configured = String(value || '').trim();
   if (!configured) return FALLBACK_MAIN_SITE_URL;
   try {
     const parsed = new URL(configured);
-    if (parsed.hostname.toLowerCase() === OBSOLETE_MAIN_SITE_HOST) return FALLBACK_MAIN_SITE_URL;
+    if (parsed.hostname.toLowerCase().endsWith('.vercel.app')) return FALLBACK_MAIN_SITE_URL;
     return configured.replace(/\/+$/, '');
   } catch {
     return FALLBACK_MAIN_SITE_URL;
