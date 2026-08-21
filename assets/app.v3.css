@@ -1,0 +1,95 @@
+/* Data-model and mobile UX additions for the August 2026 EV map refresh. */
+.ev-stats {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.ev-map-card__toolbar {
+  flex-wrap: wrap;
+}
+
+.ev-map-toolbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.ev-card--unmapped {
+  cursor: default;
+  border-style: dashed;
+}
+
+.ev-card--unmapped:hover,
+.ev-card--unmapped:focus-visible {
+  transform: none;
+  box-shadow: none;
+}
+
+.ev-config {
+  color: var(--sr-text) !important;
+  overflow-wrap: anywhere;
+}
+
+.ev-config strong {
+  color: var(--sr-primary-strong);
+}
+
+html[data-theme='dark'] .ev-config strong {
+  color: #d8f9ff;
+}
+
+#locateButton[aria-busy='true'] {
+  cursor: progress;
+  opacity: .68;
+}
+
+.sr-visually-hidden {
+  position: fixed !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+@media (max-width: 1180px) {
+  .ev-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 759px) {
+  .ev-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ev-map-card__toolbar { align-items: center; }
+  .ev-map-toolbar-actions { margin-inline-start: auto; }
+  .ev-card { content-visibility: auto; contain-intrinsic-size: 260px; }
+}
+
+@media (max-width: 390px) {
+  .ev-stat { padding: 10px; }
+  .ev-stat span { font-size: 19px; }
+  .ev-stat small { font-size: 10px; }
+  .ev-map-card__toolbar > span { width: 100%; }
+  .ev-map-toolbar-actions { width: 100%; justify-content: flex-end; }
+}
+
+/* Compact footer logo requested for the EV tool; header logo keeps canonical proportions. */
+#platformFooter .sr-footer-logo-plate {
+  width: 116px;
+  padding: 9px 11px;
+  border-radius: 17px;
+}
+
+#platformFooter .sr-footer-logo-plate img {
+  max-height: 136px;
+}
+
+@media (max-width: 650px) {
+  #platformFooter .sr-footer-logo-plate {
+    width: 98px;
+    padding: 8px 10px;
+    border-radius: 15px;
+  }
+  #platformFooter .sr-footer-logo-plate img { max-height: 116px; }
+}
