@@ -6,10 +6,11 @@
   <title>خريطة شواحن السيارات الكهربائية في سوريا | Syrian Renewables</title>
   <meta name="description" content="خريطة تفاعلية لشواحن السيارات الكهربائية في سوريا باستخدام OpenStreetMap، مع فلاتر للمحافظة والمشغل ونوع الموقع وحالة التحقق." />
   <meta name="theme-color" content="#217A8D" />
-  <meta name="sr-platform-main-site" content="https://www.syrian-renewables.com" />
+  <meta name="sr-platform-main-site" content="https://syrianrenewables.com" />
   <meta property="og:title" content="خريطة شواحن السيارات الكهربائية في سوريا" />
   <meta property="og:description" content="أداة بيانات تفاعلية من Syrian Renewables لتتبع شواحن السيارات الكهربائية في سوريا." />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ev.syrianrenewables.com/" />
 
   <script>
     (() => {
@@ -18,20 +19,13 @@
         const locale = storedLanguage === 'en' ? 'en' : 'ar';
         document.documentElement.lang = locale;
         document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';
-
         const sharedTheme = localStorage.getItem('sr-theme');
         const legacyTheme = localStorage.getItem('sr-ev-theme');
-        const theme = sharedTheme === 'dark' || sharedTheme === 'light'
-          ? sharedTheme
-          : (legacyTheme === 'dark' || legacyTheme === 'light'
-            ? legacyTheme
-            : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+        const theme = sharedTheme === 'dark' || sharedTheme === 'light' ? sharedTheme : (legacyTheme === 'dark' || legacyTheme === 'light' ? legacyTheme : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
         document.documentElement.dataset.theme = theme;
         localStorage.setItem('sr-theme', theme);
         localStorage.setItem('sr-ev-theme', theme);
-      } catch (_) {
-        document.documentElement.dataset.theme = 'light';
-      }
+      } catch (_) { document.documentElement.dataset.theme = 'light'; }
     })();
   </script>
 
@@ -44,6 +38,7 @@
   <link rel="stylesheet" href="platform-shell.css?v=20260726-1" />
   <link rel="stylesheet" href="assets/styles.v2.css?v=20260701-2" />
   <link rel="stylesheet" href="assets/platform-adapter.css?v=20260726-1" />
+  <link rel="stylesheet" href="assets/app.v3.css?v=20260821-1" />
 </head>
 <body>
   <a class="sr-skip-link" href="#main-content">تجاوز إلى المحتوى</a>
@@ -72,39 +67,22 @@
         <div class="ev-hero__content">
           <p class="ev-kicker" data-i18n="kicker">Syrian Renewables Data Tool</p>
           <h2 id="page-title" data-i18n="title">خريطة شواحن السيارات الكهربائية في سوريا</h2>
-          <p class="ev-lead" data-i18n="lead">خريطة تفاعلية مبنية على OpenStreetMap لعرض مواقع الشواحن، المشغلين، نوع المقبس، القدرة الاسمية، وعدد مخارج الشحن في كل موقع.</p>
-          <div class="ev-hero__meta">
-            <span id="lastUpdated">آخر تحديث للبيانات: جاري التحميل…</span>
-            <span id="connectorBadge">نوع المقبس المعروض: CCS2</span>
-          </div>
+          <p class="ev-lead" data-i18n="lead">خريطة تفاعلية مبنية على OpenStreetMap لعرض مواقع الشواحن والمشغلين والمقابس والقدرات الاسمية كما وردت في بيانات المشروع.</p>
+          <div class="ev-hero__meta"><span id="lastUpdated">آخر تحديث للبيانات: جاري التحميل…</span><span id="connectorBadge">بيانات الملف المرفوع</span></div>
         </div>
-        <div class="ev-hero__badge" aria-label="خريطة شواحن المركبات الكهربائية">
-          <span>⚡</span>
-          <strong data-i18n="badgeTitle">خريطة شواحن السيارات الكهربائية</strong>
-        </div>
+        <div class="ev-hero__badge" aria-label="خريطة شواحن المركبات الكهربائية"><span>⚡</span><strong data-i18n="badgeTitle">خريطة شواحن السيارات الكهربائية</strong></div>
       </section>
 
       <section class="ev-panel" aria-label="فلاتر وإحصاءات الخريطة">
         <div class="ev-panel__header">
-          <div>
-            <h2 data-i18n="filtersTitle">الفلاتر والمؤشرات</h2>
-            <p data-i18n="filtersSubtitle">استخدم البحث والفلاتر لتحديد المواقع حسب المحافظة أو المشغل أو نوع الموقع.</p>
-          </div>
-          <button id="desktopFiltersToggle" class="ev-button ev-button--ghost" type="button" data-i18n="hideFilters">إخفاء الفلاتر</button>
+          <div><h2 data-i18n="filtersTitle">الفلاتر والمؤشرات</h2><p data-i18n="filtersSubtitle">استخدم البحث والفلاتر لتحديد المواقع حسب المحافظة أو المشغل أو نوع الموقع.</p></div>
+          <button id="desktopFiltersToggle" class="ev-button ev-button--ghost" type="button" data-i18n="showFilters">إظهار الفلاتر</button>
         </div>
-
         <div id="filtersOverlay" class="ev-filters-overlay" hidden></div>
         <div id="filtersPanel" class="ev-filters-panel" aria-label="فلاتر الخريطة">
-          <div class="ev-filters-panel__head">
-            <strong data-i18n="filtersTitle">الفلاتر والمؤشرات</strong>
-            <button id="closeFiltersButton" class="ev-icon-button" type="button" aria-label="إغلاق الفلاتر">×</button>
-          </div>
-
+          <div class="ev-filters-panel__head"><strong data-i18n="filtersTitle">الفلاتر والمؤشرات</strong><button id="closeFiltersButton" class="ev-icon-button" type="button" aria-label="إغلاق الفلاتر">×</button></div>
           <div class="ev-filters">
-            <label class="ev-field ev-field--search">
-              <span data-i18n="searchLabel">بحث</span>
-              <input id="searchInput" type="search" placeholder="ابحث بالاسم، المدينة، المشغل أو نوع الموقع…" autocomplete="off" />
-            </label>
+            <label class="ev-field ev-field--search"><span data-i18n="searchLabel">بحث</span><input id="searchInput" type="search" placeholder="ابحث بالاسم، المدينة، المشغل أو نوع الموقع…" autocomplete="off" inputmode="search" /></label>
             <label class="ev-field"><span data-i18n="governorateLabel">المحافظة</span><select id="governorateFilter"><option value="all">كل المحافظات</option></select></label>
             <label class="ev-field"><span data-i18n="operatorLabel">المشغل</span><select id="operatorFilter"><option value="all">كل المشغلين</option></select></label>
             <label class="ev-field"><span data-i18n="connectorLabel">نوع المقبس</span><select id="connectorFilter"><option value="all">كل المقابس</option></select></label>
@@ -115,11 +93,12 @@
         </div>
 
         <div class="ev-stats" aria-live="polite">
-          <article class="ev-stat"><span id="totalLocations">0</span><small data-i18n="locationsStat">موقع شحن</small></article>
+          <article class="ev-stat"><span id="totalLocations">0</span><small data-i18n="locationsStat">موقع في البيانات</small></article>
           <article class="ev-stat"><span id="totalChargers">0</span><small data-i18n="chargersStat">شاحن</small></article>
-          <article class="ev-stat"><span id="totalGuns">0</span><small data-i18n="gunsStat">مخرج شحن</small></article>
-          <article class="ev-stat"><span id="totalPower">0 kW</span><small data-i18n="powerStat">قدرة اسمية إجمالية</small></article>
-          <article class="ev-stat"><span id="coveredGovernorates">0</span><small data-i18n="governoratesStat">محافظة</small></article>
+          <article class="ev-stat"><span id="totalGuns">0</span><small data-i18n="gunsStat">مخارج مذكورة</small></article>
+          <article class="ev-stat"><span id="totalPower">0 kW</span><small data-i18n="powerStat">قدرة اسمية مجمعة</small></article>
+          <article class="ev-stat"><span id="coveredGovernorates">0</span><small data-i18n="governoratesStat">محافظة معروفة</small></article>
+          <article class="ev-stat"><span id="pendingLocations">0</span><small data-i18n="pendingStat">بانتظار إحداثيات</small></article>
         </div>
       </section>
 
@@ -127,16 +106,15 @@
         <div class="ev-map-card">
           <div class="ev-map-card__toolbar">
             <span data-i18n="mapProvider">الخريطة: OpenStreetMap</span>
-            <button id="fitMapButton" class="ev-button ev-button--small" type="button" data-i18n="fitMap">عرض كل المواقع</button>
+            <div class="ev-map-toolbar-actions">
+              <button id="locateButton" class="ev-button ev-button--small ev-button--ghost" type="button" data-i18n="locateMe" aria-label="إظهار موقعي الحالي">موقعي</button>
+              <button id="fitMapButton" class="ev-button ev-button--small" type="button" data-i18n="fitMap">عرض كل المواقع</button>
+            </div>
           </div>
           <div id="map" class="ev-map" role="application" aria-label="خريطة شواحن السيارات الكهربائية في سوريا"></div>
         </div>
-
         <aside class="ev-sidebar" aria-label="قائمة شواحن السيارات الكهربائية">
-          <div class="ev-sidebar__header">
-            <h2 data-i18n="listTitle">قائمة الشواحن</h2>
-            <p id="resultCount">جاري تحميل النتائج…</p>
-          </div>
+          <div class="ev-sidebar__header"><h2 data-i18n="listTitle">قائمة الشواحن</h2><p id="resultCount">جاري تحميل النتائج…</p></div>
           <div id="chargerList" class="ev-list"></div>
         </aside>
       </section>
@@ -150,12 +128,12 @@
   </div>
 
   <div id="platformFooter"></div>
-
   <noscript>تحتاج هذه الخريطة إلى تفعيل JavaScript حتى تعمل بشكل صحيح.</noscript>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="this.onerror=null;this.src='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js';"></script>
-  <script src="assets/app.v2.js?v=20260701-2" defer></script>
+  <script src="assets/app.v2.js?v=20260821-1" defer></script>
   <script src="assets/ui-fix.js?v=20260701-3" defer></script>
   <script src="assets/platform-runtime-fixes.js?v=20260726-1" defer></script>
-  <script type="module" src="platform-integration.js?v=20260726-1"></script>
+  <script src="assets/mobile-ux.js?v=20260821-1" defer></script>
+  <script type="module" src="platform-integration.js?v=20260821-1"></script>
 </body>
 </html>
