@@ -1,16 +1,18 @@
 import { mountPlatformShell } from './platform-shell.js';
 
-const FALLBACK_MAIN_SITE_URL = 'https://www.syrian-renewables.com';
+const CANONICAL_MAIN_SITE_URL = 'https://syrianrenewables.com';
+const OBSOLETE_MAIN_SITE_HOSTS = new Set(['syrian-renewables.com', 'www.syrian-renewables.com']);
 
 function resolveMainSiteUrl(value) {
   const configured = String(value || '').trim();
-  if (!configured) return FALLBACK_MAIN_SITE_URL;
+  if (!configured) return CANONICAL_MAIN_SITE_URL;
   try {
     const parsed = new URL(configured);
-    if (parsed.hostname.toLowerCase().endsWith('.vercel.app')) return FALLBACK_MAIN_SITE_URL;
+    const host = parsed.hostname.toLowerCase();
+    if (host.endsWith('.vercel.app') || OBSOLETE_MAIN_SITE_HOSTS.has(host)) return CANONICAL_MAIN_SITE_URL;
     return configured.replace(/\/+$/, '');
   } catch {
-    return FALLBACK_MAIN_SITE_URL;
+    return CANONICAL_MAIN_SITE_URL;
   }
 }
 
@@ -25,8 +27,10 @@ const LEGACY_THEME_KEY = 'sr-ev-theme';
 let destroyShell = null;
 
 function getLocale() {
-  const stored = localStorage.getItem(LANG_KEY);
-  if (stored === 'ar' || stored === 'en') return stored;
+  try {
+    const stored = localStorage.getItem(LANG_KEY);
+    if (stored === 'ar' || stored === 'en') return stored;
+  } catch (_) {}
   return document.documentElement.lang === 'en' ? 'en' : 'ar';
 }
 
@@ -63,7 +67,7 @@ function mount() {
       const legacyToggle = document.getElementById('languageToggle');
       if (legacyToggle) legacyToggle.click();
       else {
-        localStorage.setItem(LANG_KEY, nextLocale);
+        try { localStorage.setItem(LANG_KEY, nextLocale); } catch (_) {}
         document.documentElement.lang = nextLocale;
         document.documentElement.dir = nextLocale === 'ar' ? 'rtl' : 'ltr';
       }
@@ -82,8 +86,12 @@ function mount() {
 }
 
 function reconcileTheme() {
-  const shared = localStorage.getItem(SHARED_THEME_KEY);
-  const legacy = localStorage.getItem(LEGACY_THEME_KEY);
+  let shared = null;
+  let legacy = null;
+  try {
+    shared = localStorage.getItem(SHARED_THEME_KEY);
+    legacy = localStorage.getItem(LEGACY_THEME_KEY);
+  } catch (_) {}
   const desired = shared === 'dark' || shared === 'light'
     ? shared
     : (legacy === 'dark' || legacy === 'light' ? legacy : document.documentElement.dataset.theme);
