@@ -75,7 +75,11 @@
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "no-store"
+          "value": "private, no-store, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
         },
         {
           "key": "X-Frame-Options",
@@ -88,7 +92,11 @@
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=300, stale-while-revalidate=3600"
+          "value": "private, no-store, max-age=0, must-revalidate"
+        },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
         }
       ]
     }
