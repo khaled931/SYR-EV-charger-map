@@ -87,6 +87,57 @@ function bundledRowToRecord(row = {}, defaults = {}) {
   };
 }
 
+const BUNDLED_RECORD_MIGRATIONS = [
+  {
+    id: 'SY-DI-DAM-SHERATON-001',
+    version: '2026-09-28-sheraton-unavailable-v1',
+    fields: ['status', 'data_quality', 'needs_review', 'notes_ar', 'notes_en'],
+  },
+];
+
+async function applyBundledRecordMigrations(db, payload) {
+  const rows = Array.isArray(payload?.chargers) ? payload.chargers : [];
+  const collection = db.collection('ev_chargers');
+  let updatedCount = 0;
+
+  for (const migration of BUNDLED_RECORD_MIGRATIONS) {
+    const bundled = rows.find((row) => String(row.id || row.suggested_id || '') === migration.id);
+    if (!bundled) continue;
+
+    const ref = collection.doc(migration.id);
+    const snapshot = await ref.get();
+    if (!snapshot.exists) continue;
+
+    const current = snapshot.data() || {};
+    if (current.bundled_migration_version === migration.version) continue;
+
+    const patch = {};
+    migration.fields.forEach((field) => {
+      if (bundled[field] !== undefined) patch[field] = bundled[field];
+    });
+
+    await ref.set({
+      ...patch,
+      bundled_migration_version: migration.version,
+      updated_at: FieldValue.serverTimestamp(),
+      updated_by: 'system:bundled-migration',
+    }, { merge: true });
+
+    await db.collection('ev_charger_audit').add({
+      action: 'bundled-data-migration',
+      record_id: migration.id,
+      migration_version: migration.version,
+      changed_fields: migration.fields,
+      actor_email: 'system:bundled-migration',
+      created_at: FieldValue.serverTimestamp(),
+    });
+
+    updatedCount += 1;
+  }
+
+  return { updatedCount };
+}
+
 async function seedBundledChargersIfEmpty(db, payload) {
   const enabled = String(process.env.FIREBASE_AUTO_SEED_FROM_JSON || 'true').toLowerCase() !== 'false';
   if (!enabled) return { seeded: false, reason: 'disabled', count: 0 };
@@ -127,4 +178,5 @@ async function seedBundledChargersIfEmpty(db, payload) {
 module.exports = {
   bundledRowToRecord,
   seedBundledChargersIfEmpty,
+  applyBundledRecordMigrations,
 };

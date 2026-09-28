@@ -103,6 +103,38 @@
             <label class="field"><span>خط الطول <small>Longitude</small></span><input name="longitude" type="number" min="35" max="43" step="any" required /></label>
           </div>
 
+          <div class="form-grid form-grid--two">
+            <label class="field">
+              <span>حالة التشغيل <small>Status</small></span>
+              <select name="status">
+                <option value="listed">مدرج في البيانات</option>
+                <option value="operational">عاملة</option>
+                <option value="partially_operational">عاملة جزئياً</option>
+                <option value="unavailable">غير متاحة / خارج الخدمة</option>
+                <option value="planned">مخططة</option>
+                <option value="under_construction">قيد الإنشاء</option>
+                <option value="needs_verification">تحتاج تحقق</option>
+                <option value="unknown">غير معروف</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>جودة البيانات <small>Data Quality</small></span>
+              <select name="data_quality">
+                <option value="Verified">Verified</option>
+                <option value="High Confidence">High Confidence</option>
+                <option value="Medium Confidence" selected>Medium Confidence</option>
+                <option value="Low Confidence">Low Confidence</option>
+                <option value="Estimated">Estimated</option>
+                <option value="Unverified">Unverified</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="bilingual-grid">
+            <label class="field"><span>ملاحظة مرتبطة بالمحطة <small>Notes AR</small></span><textarea name="notes_ar" rows="4" maxlength="1200" placeholder="اكتب ملاحظة الحالة أو التنويه المرتبط بالمحطة…"></textarea></label>
+            <label class="field" dir="ltr"><span>Station note <small>Notes EN</small></span><textarea name="notes_en" rows="4" maxlength="1200" placeholder="Add the operational note or station notice…"></textarea></label>
+          </div>
+
           <div class="form-actions">
             <button id="saveButton" class="button button--primary" type="submit">حفظ ونشر السجل</button>
             <button id="cancelEditButton" class="button button--secondary" type="button" hidden>إلغاء التعديل</button>

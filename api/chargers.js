@@ -3,7 +3,7 @@
 const fallbackPayload = require('../data/chargers.v2.json');
 const { getDb, hasFirebaseAdminConfig } = require('./_lib/firebase-admin');
 const { methodNotAllowed, sendJson } = require('./_lib/http');
-const { seedBundledChargersIfEmpty } = require('./_lib/seed');
+const { seedBundledChargersIfEmpty, applyBundledRecordMigrations } = require('./_lib/seed');
 const { publicRecord } = require('./_lib/validation');
 
 const ACCESS_API_URL = 'https://syrianrenewables.com/api/access';
@@ -11,6 +11,7 @@ const EV_APP_ORIGIN = 'https://ev.syrianrenewables.com';
 const SERVICE_KEY = 'ev_chargers_map';
 const FALLBACK_GUEST_LIMIT = 5;
 const ACCESS_TIMEOUT_MS = 3000;
+let bundledMigrationsChecked = false;
 
 function timestampToIso(value) {
   if (!value) return '';
@@ -149,6 +150,12 @@ async function buildPayload() {
     if (snapshot.empty) {
       seedResult = await seedBundledChargersIfEmpty(db, fallbackPayload);
       if (seedResult.seeded) snapshot = await db.collection('ev_chargers').get();
+    }
+
+    if (!bundledMigrationsChecked) {
+      const migrationResult = await applyBundledRecordMigrations(db, fallbackPayload);
+      bundledMigrationsChecked = true;
+      if (migrationResult.updatedCount > 0) snapshot = await db.collection('ev_chargers').get();
     }
 
     const rows = snapshot.docs

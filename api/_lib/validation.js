@@ -3,6 +3,7 @@
 const { isGoogleMapsUrl, isValidCoordinatePair, isWithinSyriaBounds } = require('./maps');
 
 const MAX_TEXT = 180;
+const MAX_NOTES = 1200;
 const MAX_ID = 90;
 
 function cleanText(value, maxLength = MAX_TEXT) {
@@ -51,6 +52,9 @@ function normalizeInput(input = {}) {
   const chargerNumbers = Number(firstValue(input, ['charger_numbers', 'Charger_Numbers', 'Charger numbers', 'charger_count']));
   const ratedPowerKw = Number(firstValue(input, ['rated_power_kw', 'Rated_Power_kW', 'power_kw']));
   const gunsPerCharger = Number(firstValue(input, ['guns_per_charger', 'Guns_Per_Charger', 'guns']));
+  const notesAr = cleanText(firstValue(input, ['notes_ar', 'Notes_AR', 'notes']), MAX_NOTES);
+  const notesEn = cleanText(firstValue(input, ['notes_en', 'Notes_EN']), MAX_NOTES);
+  const sourceDate = cleanText(firstValue(input, ['source_date', 'Source_Date']), 40);
 
   return {
     suggested_id: suggestedId,
@@ -85,6 +89,9 @@ function normalizeInput(input = {}) {
     status: cleanText(input.status || 'listed', 40),
     data_quality: cleanText(input.data_quality || 'Medium Confidence', 40),
     needs_review: Boolean(input.needs_review),
+    notes_ar: notesAr,
+    notes_en: notesEn,
+    source_date: sourceDate,
   };
 }
 
@@ -156,6 +163,9 @@ function publicRecord(record) {
     status: record.status || 'listed',
     data_quality: record.data_quality || 'Medium Confidence',
     needs_review: Boolean(record.needs_review),
+    notes_ar: record.notes_ar || '',
+    notes_en: record.notes_en || '',
+    source_date: record.source_date || '',
     source_url: record.google_maps_url || record.source_url || '',
   };
 }

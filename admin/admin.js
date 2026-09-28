@@ -33,7 +33,7 @@ const importHeaders = [
   'City_AR', 'City_EN', 'Site_Name_AR', 'Site_Name_EN', 'Charger_Type_AR',
   'Charger_Type_EN', 'Charger_Numbers', 'Site_Type_AR', 'Site_Type_EN',
   'Google_Maps_URL', 'Latitude', 'Longitude', 'Published', 'Rated_Power_kW',
-  'Guns_Per_Charger', 'Status', 'Data_Quality',
+  'Guns_Per_Charger', 'Status', 'Data_Quality', 'Notes_AR', 'Notes_EN',
 ];
 
 const siteTypeEnglish = {
@@ -300,6 +300,10 @@ function formRecord() {
     latitude: Number(form.latitude.value),
     longitude: Number(form.longitude.value),
     published: form.published.checked,
+    status: form.status.value,
+    data_quality: form.data_quality.value,
+    notes_ar: form.notes_ar.value.trim(),
+    notes_en: form.notes_en.value.trim(),
   };
 }
 
@@ -324,6 +328,10 @@ function editRecord(record) {
   form.latitude.value = record.latitude ?? '';
   form.longitude.value = record.longitude ?? '';
   form.published.checked = record.published !== false;
+  form.status.value = record.status || 'listed';
+  form.data_quality.value = record.data_quality || 'Medium Confidence';
+  form.notes_ar.value = record.notes_ar || '';
+  form.notes_en.value = record.notes_en || '';
   els.formTitle.textContent = `تعديل: ${record.site_name_ar || record.name_ar || record.suggested_id}`;
   els.saveButton.textContent = 'حفظ التعديلات';
   els.cancelEditButton.hidden = false;
@@ -351,6 +359,8 @@ async function deleteRecord(record) {
 function resetForm(clearMessage = true) {
   els.chargerForm.reset();
   els.chargerForm.elements.published.checked = true;
+  els.chargerForm.elements.status.value = 'listed';
+  els.chargerForm.elements.data_quality.value = 'Medium Confidence';
   els.editingId.value = '';
   els.formTitle.textContent = 'إضافة موقع شحن جديد';
   els.saveButton.textContent = 'حفظ ونشر السجل';
@@ -475,6 +485,8 @@ function canonicalImportRecord(row) {
     guns_per_charger: Number(value('Guns_Per_Charger', 'guns_per_charger', 'guns')) || 0,
     status: String(value('Status', 'status') || 'listed').trim(),
     data_quality: String(value('Data_Quality', 'data_quality') || 'Medium Confidence').trim(),
+    notes_ar: String(value('Notes_AR', 'notes_ar', 'notes') || '').trim(),
+    notes_en: String(value('Notes_EN', 'notes_en') || '').trim(),
   };
 }
 
@@ -561,6 +573,8 @@ function exportRows() {
     Guns_Per_Charger: record.guns_per_charger ?? '',
     Status: record.status || 'listed',
     Data_Quality: record.data_quality || 'Medium Confidence',
+    Notes_AR: record.notes_ar || '',
+    Notes_EN: record.notes_en || '',
   }));
 }
 
