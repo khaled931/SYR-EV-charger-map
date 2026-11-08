@@ -62,7 +62,10 @@ test('unified shell and EV map work on the Vercel Preview', async ({ page }) => 
   await expect(page.locator('html')).toHaveAttribute('dir', 'ltr');
   await expect(page.locator('#platformHeader .sr-main-nav a[href$="/en/news"]')).toHaveAttribute('href', /\/en\/news$/);
 
-  await expect(page.locator('#fitMapButton')).toBeVisible();
+  const fitControl = (page.viewportSize()?.width ?? 1024) <= 759
+    ? '#mapFitButtonMobile'
+    : '#fitMapButton';
+  await expect(page.locator(fitControl)).toBeVisible();
 });
 
 test('public API and protected admin entry remain available', async ({ request }) => {
