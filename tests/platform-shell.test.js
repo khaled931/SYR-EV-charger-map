@@ -50,12 +50,20 @@ test('shared shell preserves bilingual direction and theme compatibility', () =>
   assert.match(tokens, /--sr-font-latin/);
 });
 
-test('bundled charger data is synchronized with the uploaded workbook without inventing coordinates', () => {
+test('preserves workbook chargers and adds an airport record without inventing technical details', () => {
   const payload = JSON.parse(read('data/chargers.v2.json'));
-  assert.equal(payload.chargers.length, 18);
+  assert.equal(payload.chargers.length, 19);
   assert.equal(payload.chargers.reduce((sum, row) => sum + row.charger_count, 0), 27);
-  assert.equal(payload.chargers.reduce((sum, row) => sum + (row.total_power_kw || 0), 0), 2480);
-  assert.equal(payload.chargers.filter((row) => Number.isFinite(row.latitude) && Number.isFinite(row.longitude)).length, 17);
+  assert.equal(payload.chargers.reduce((sum, row) => sum + (row.total_power_kw || 0), 0), 2600);
+  assert.equal(payload.chargers.filter((row) => Number.isFinite(row.latitude) && Number.isFinite(row.longitude)).length, 18);
+  const airport = payload.chargers.find((row) => row.id === 'SY-RD-DAM-AIRPORT-001');
+  assert.ok(airport);
+  assert.equal(airport.charger_count, 0);
+  assert.equal(airport.total_power_kw, 120);
+  assert.equal(airport.data_quality, 'Medium Confidence');
+  assert.equal(airport.status, 'needs_verification');
+  assert.deepEqual(airport.connector_types, []);
+  assert.match(airport.notes_ar, /ليست الموقع الدقيق للشاحن/);
   const fsd = payload.chargers.find((row) => row.id === 'SY-TBD-TBD-FSD-001');
   assert.ok(fsd); assert.equal(fsd.latitude, null); assert.equal(fsd.longitude, null); assert.equal(fsd.needs_review, true);
   const jallab = payload.chargers.find((row) => row.id === 'SY-RD-DAM-JALLAB-001');
@@ -74,7 +82,7 @@ test('map keeps coordinate-pending records in the list and pins only mappable re
 test('mobile map uses dynamic viewport sizing and compact footer logo', () => {
   const mobile = read('assets/mobile-ux.js');
   const additions = read('assets/app.v3.css');
-  assert.match(mobile, /100dvh|64dvh|61dvh/);
+  assert.match(mobile, /100dvh|64dvh|61dvh|58dvh/);
   assert.match(mobile, /backdrop-filter: none !important/);
   assert.match(additions, /#platformFooter \.sr-footer-logo-plate[\s\S]*width: 116px/);
 });
