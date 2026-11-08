@@ -111,7 +111,16 @@ function applyAccess(payload, access) {
   const chargers = Array.isArray(payload?.chargers) ? payload.chargers : [];
   const fullAccess = access?.allowed === true;
   const guestLimit = guestLimitFrom(access);
-  const visibleChargers = fullAccess ? chargers : chargers.slice(0, guestLimit);
+  // Explicitly public stations remain available to guests beyond the sample limit.
+  // This does not expose any other members-only records.
+  const guestSample = chargers.slice(0, guestLimit);
+  const publicStationIds = new Set(['SY-RD-DAM-AIRPORT-001']);
+  const featuredPublic = chargers.filter((row) =>
+    row.published !== false &&
+    publicStationIds.has(String(row.suggested_id || row.id || '')) &&
+    !guestSample.some((sample) => String(sample.suggested_id || sample.id || '') === String(row.suggested_id || row.id || ''))
+  );
+  const visibleChargers = fullAccess ? chargers : guestSample.concat(featuredPublic);
 
   return {
     ...payload,

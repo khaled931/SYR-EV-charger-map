@@ -8,6 +8,12 @@ test('unified shell and EV map work on the Vercel Preview', async ({ page }) => 
   await expect(page.locator('#map')).toBeVisible();
   await expect(page.locator('#chargerList .ev-card').first()).toBeVisible({ timeout: 25_000 });
 
+  // Airport charger is intentionally public even when the general dataset is guest-limited.
+  const airportCard = page.locator('#chargerList .ev-card').filter({ hasText: 'محطة شحن مطار دمشق الدولي' });
+  await expect(airportCard).toBeVisible();
+  await expect(airportCard).toContainText('Green Road');
+  await expect(airportCard).toContainText('تم التحقق');
+
   const cards = page.locator('#chargerList .ev-card');
   const initialCardCount = await cards.count();
   expect(initialCardCount).toBeGreaterThan(1);
