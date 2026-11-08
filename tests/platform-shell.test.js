@@ -60,8 +60,11 @@ test('preserves workbook chargers and adds an airport record without inventing t
   assert.ok(airport);
   assert.equal(airport.charger_count, 0);
   assert.equal(airport.total_power_kw, 120);
-  assert.equal(airport.data_quality, 'Medium Confidence');
-  assert.equal(airport.status, 'needs_verification');
+  assert.equal(airport.operator, 'Green Road');
+  assert.equal(airport.data_quality, 'Verified');
+  assert.equal(airport.status, 'listed');
+  assert.equal(airport.published, true);
+  assert.equal(airport.needs_review, false);
   assert.deepEqual(airport.connector_types, []);
   assert.match(airport.notes_ar, /ليست الموقع الدقيق للشاحن/);
   const fsd = payload.chargers.find((row) => row.id === 'SY-TBD-TBD-FSD-001');

@@ -99,6 +99,11 @@ const BUNDLED_RECORD_MIGRATIONS = [
     version: '2026-09-28-sheraton-unavailable-v1',
     fields: ['status', 'data_quality', 'needs_review', 'notes_ar', 'notes_en'],
   },
+  {
+    id: 'SY-RD-DAM-AIRPORT-001',
+    version: '2026-11-09-airport-operator-verified-v1',
+    fields: ['company_ar', 'company_en', 'operator', 'operator_ar', 'operator_en', 'status', 'data_quality', 'needs_review', 'notes_ar', 'notes_en', 'published'],
+  },
 ];
 
 async function applyBundledRecordMigrations(db, payload) {
@@ -117,9 +122,10 @@ async function applyBundledRecordMigrations(db, payload) {
     const current = snapshot.data() || {};
     if (current.bundled_migration_version === migration.version) continue;
 
+    const normalized = bundledRowToRecord(bundled, payload.defaults || {});
     const patch = {};
     migration.fields.forEach((field) => {
-      if (bundled[field] !== undefined) patch[field] = bundled[field];
+      if (normalized[field] !== undefined) patch[field] = normalized[field];
     });
 
     await ref.set({
