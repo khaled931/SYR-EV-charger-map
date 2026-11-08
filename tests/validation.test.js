@@ -32,6 +32,13 @@ test('normalizes the bilingual import format', () => {
   assert.deepEqual(result.record.connector_types, ['GB/T']);
 });
 
+test('supports a known site power with unknown number of devices', () => {
+  const result = validateRecord({ ...validRecord, Charger_Numbers: 0, Total_Power_kW: 120 });
+  assert.equal(result.valid, true);
+  assert.equal(result.record.charger_numbers, 0);
+  assert.equal(result.record.total_power_kw, 120);
+});
+
 test('rejects coordinates outside Syria', () => {
   const result = validateRecord({ ...validRecord, Longitude: -84.3 });
   assert.equal(result.valid, false);

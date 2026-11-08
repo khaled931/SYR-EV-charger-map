@@ -35,3 +35,21 @@ test('normalizes bundled charger data into bilingual Firestore records', () => {
   assert.equal(record.guns_per_charger, 2);
   assert.equal(record.published, true);
 });
+
+test('preserves unknown device count and announced site capacity', () => {
+  const record = bundledRowToRecord({
+    id: 'SY-RD-DAM-AIRPORT-001',
+    name_ar: 'محطة شحن مطار دمشق الدولي',
+    charger_count: 0,
+    total_power_kw: 120,
+    rated_power_kw: null,
+    connector_types: [],
+    needs_review: true,
+  });
+  assert.equal(record.charger_count, 0);
+  assert.equal(record.charger_numbers, 0);
+  assert.equal(record.total_power_kw, 120);
+  assert.equal(record.rated_power_kw, null);
+  assert.deepEqual(record.connector_types, []);
+  assert.equal(record.needs_review, true);
+});

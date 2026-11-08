@@ -80,7 +80,7 @@
     },
     "charger_numbers": {
       "type": "integer",
-      "minimum": 1,
+      "minimum": 0,
       "maximum": 200
     },
     "site_type_ar": {
@@ -108,6 +108,7 @@
       "minimum": 35,
       "maximum": 43
     },
+    "total_power_kw": { "type": ["number", "null"], "minimum": 0 },
     "published": {
       "type": "boolean",
       "default": true

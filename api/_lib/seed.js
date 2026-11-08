@@ -67,10 +67,16 @@ function bundledRowToRecord(row = {}, defaults = {}) {
     charger_type_ar: String(row.charger_type_ar || chargerType).trim(),
     charger_type_en: String(row.charger_type_en || chargerType).trim(),
     connector_types: connectors,
-    charger_numbers: Number.isInteger(chargerCount) && chargerCount > 0 ? chargerCount : 1,
-    charger_count: Number.isInteger(chargerCount) && chargerCount > 0 ? chargerCount : 1,
-    rated_power_kw: Number(row.rated_power_kw ?? defaults.rated_power_kw ?? 0) || 0,
-    guns_per_charger: Number(row.guns_per_charger ?? defaults.guns_per_charger ?? 0) || 0,
+    charger_numbers: Number.isInteger(chargerCount) && chargerCount >= 0 ? chargerCount : 1,
+    charger_count: Number.isInteger(chargerCount) && chargerCount >= 0 ? chargerCount : 1,
+    rated_power_kw: row.rated_power_kw === null ? null : (Number(row.rated_power_kw ?? defaults.rated_power_kw ?? 0) || 0),
+    total_power_kw: row.total_power_kw == null ? null : Number(row.total_power_kw),
+    guns_per_charger: row.guns_per_charger === null ? null : (Number(row.guns_per_charger ?? defaults.guns_per_charger ?? 0) || 0),
+    total_guns: row.total_guns == null ? null : Number(row.total_guns),
+    access_ar: String(row.access_ar || defaults.access_ar || 'غير محدد'),
+    access_en: String(row.access_en || defaults.access_en || 'Unspecified'),
+    price_note_ar: String(row.price_note_ar || defaults.price_note_ar || 'غير متوفر'),
+    price_note_en: String(row.price_note_en || defaults.price_note_en || 'Not available'),
     site_type_ar: siteTypeAr,
     site_type_en: siteTypeEn,
     google_maps_url: mapsUrl,
@@ -135,6 +141,30 @@ async function applyBundledRecordMigrations(db, payload) {
     updatedCount += 1;
   }
 
+  // Insert a bundled station only when absent; preserve manually managed Firestore records.
+  const airportId = 'SY-RD-DAM-AIRPORT-001';
+  const airportRow = rows.find((row) => String(row.id || row.suggested_id || '') === airportId);
+  if (airportRow) {
+    try {
+      await collection.doc(airportId).create({
+        ...bundledRowToRecord(airportRow, payload.defaults || {}),
+        created_at: FieldValue.serverTimestamp(),
+        updated_at: FieldValue.serverTimestamp(),
+        created_by: 'system:bundled-insertion',
+        updated_by: 'system:bundled-insertion',
+      });
+      await db.collection('ev_charger_audit').add({
+        action: 'bundled-data-insertion',
+        record_id: airportId,
+        actor_email: 'system:bundled-insertion',
+        created_at: FieldValue.serverTimestamp(),
+      });
+      updatedCount += 1;
+    } catch (error) {
+      // Concurrent serverless requests may race to create the same document.
+      if (![6, '6', 'already-exists'].includes(error.code)) throw error;
+    }
+  }
   return { updatedCount };
 }
 

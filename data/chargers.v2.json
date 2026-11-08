@@ -1,12 +1,12 @@
 {
   "metadata": {
     "version": "3.0.0",
-    "last_updated": "2026-08-21",
+    "last_updated": "2026-11-09",
     "source_file": "EV charger location.xlsx",
-    "source_note_ar": "تمت مزامنة السجلات مباشرة مع ورقة Charger في الملف المرفوع، مع الحفاظ على المعرّفات والإحداثيات ووصف تجهيزات الشحن كما وردت في المصدر.",
-    "source_note_en": "Records are synchronized directly with the Charger sheet in the uploaded workbook, preserving source IDs, coordinates, and charger configuration descriptions.",
-    "data_quality_note_ar": "الحالة «مدرج» تعني أن الموقع وارد في بيانات المشروع وليست إثباتاً ميدانياً مستقلاً على التشغيل. يوجد سجل واحد بلا إحداثيات (FSD)، كما أن إحداثيات استراحة الجلاب وكلوفر مول شبه متطابقة رغم اختلاف الموقع الإداري؛ لذلك جرى إبقاؤها كما وردت ووسمها للتحقق بدلاً من اختلاق تصحيح.",
-    "data_quality_note_en": "Listed status means a site is present in the project dataset, not independently field-verified as operational. One record (FSD) has no coordinates. Al Jallab Rest Area and Clover Mall have near-identical source coordinates despite different administrative locations, so the source values are preserved and flagged for verification rather than silently corrected."
+    "source_note_ar": "تمت مزامنة السجلات مباشرة مع ورقة Charger في الملف المرفوع، مع الحفاظ على المعرّفات والإحداثيات ووصف تجهيزات الشحن كما وردت في المصدر. أُضيف سجل أولي لمحطة مطار دمشق الدولي بتاريخ 9 نوفمبر 2026 استناداً إلى وصف إعلان دون رابط أصلي.",
+    "source_note_en": "Records are synchronized directly with the Charger sheet in the uploaded workbook, preserving source IDs, coordinates, and charger configuration descriptions. A preliminary Damascus International Airport record was added on 9 November 2026 without an original announcement link.",
+    "data_quality_note_ar": "الحالة «مدرج» تعني أن الموقع وارد في بيانات المشروع وليست إثباتاً ميدانياً مستقلاً على التشغيل. يوجد سجل واحد بلا إحداثيات (FSD)، كما أن إحداثيات استراحة الجلاب وكلوفر مول شبه متطابقة رغم اختلاف الموقع الإداري؛ لذلك جرى إبقاؤها كما وردت ووسمها للتحقق بدلاً من اختلاق تصحيح. إحداثيات المطار مرجعية وليست موقع الشاحن، والمخارج وعدد الأجهزة غير مؤكدين.",
+    "data_quality_note_en": "Listed status means a site is present in the project dataset, not independently field-verified as operational. One record (FSD) has no coordinates. Al Jallab Rest Area and Clover Mall have near-identical source coordinates despite different administrative locations, so the source values are preserved and flagged for verification rather than silently corrected. Airport coordinates are reference-only; charger and outlet counts and standards are unconfirmed."
   },
   "defaults": {
     "status": "listed",
@@ -513,6 +513,43 @@
       "guns_per_charger": 2,
       "total_guns": 4,
       "source_url": "https://maps.app.goo.gl/WTSq7kSE3S9689yP6?g_st=ic"
+    },
+    {
+      "id": "SY-RD-DAM-AIRPORT-001",
+      "name_ar": "محطة شحن مطار دمشق الدولي",
+      "name_en": "Damascus International Airport EV Charging Station",
+      "operator": "غير معروف",
+      "operator_en": "Unknown",
+      "governorate_ar": "ريف دمشق",
+      "governorate_en": "Rif Dimashq",
+      "city_ar": "مطار دمشق الدولي",
+      "city_en": "Damascus International Airport",
+      "site_type_ar": "مطار دولي",
+      "site_type_en": "International airport",
+      "latitude": 33.410833,
+      "longitude": 36.513333,
+      "charger_count": 0,
+      "connector_types": [],
+      "charger_type_ar": "شحن سريع بالتيار المستمر (DC) بقدرة اسمية معلنة للموقع 120 كيلوواط؛ مخارج أوروبية وصينية وفق الإعلان، بينما CCS2 وGB/T DC مرجحان وغير مؤكدين",
+      "charger_type_en": "DC fast charging; announced nominal site power 120 kW, European and Chinese outlets claimed. CCS2 and GB/T DC remain tentative and unconfirmed.",
+      "rated_power_kw": null,
+      "total_power_kw": 120,
+      "guns_per_charger": null,
+      "total_guns": null,
+      "status": "needs_verification",
+      "data_quality": "Medium Confidence",
+      "needs_review": true,
+      "published": true,
+      "access_ar": "غير مؤكدة؛ المحطة ضمن نطاق المطار",
+      "access_en": "Unconfirmed; within airport premises",
+      "price_note_ar": "غير معلنة",
+      "price_note_en": "Not disclosed",
+      "source_url": "https://www.google.com/maps/search/?api=1&query=Damascus+International+Airport+Syria",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=Damascus+International+Airport+Syria",
+      "source_date": "",
+      "date_added": "2026-11-09",
+      "notes_ar": "أُعلن عن افتتاح محطة شحن سريع DC بقدرة اسمية إجمالية 120 كيلوواط، لكن التشغيل الفعلي غير متحقق منه مستقلاً. الإعلان الأصلي غير متاح برابط، وذُكرت مخارج أوروبية وصينية دون تحديد مواصفاتها؛ CCS2 وGB/T DC ترجيح فقط. عدد الأجهزة والمخارج وتوزيع القدرة والمشغل وتاريخ الافتتاح وساعات العمل وأسعار الخدمة ووسائل الدفع وإمكانية الوصول غير معروفة أو غير مؤكدة. الإحداثيات (33.410833، 36.513333) تخص نقطة مرجعية للمطار، وليست الموقع الدقيق للشاحن. رابط Google Maps للمطار وليس مصدراً للإعلان. تاريخ إدخال البيانات 9 نوفمبر 2026.",
+      "notes_en": "An airport DC fast-charging site with 120 kW nominal total power was announced, but actual operation has not been independently verified. No original announcement URL is available. European and Chinese outlets were mentioned, but CCS2 and GB/T DC are merely unconfirmed possibilities. Number of chargers and outlets, power allocation, operator, opening date, hours, pricing, payment and access are unknown or unconfirmed. Coordinates (33.410833, 36.513333) reference the airport, not the charger's precise location. Google Maps is a location link, not the source of the announcement. Entered 9 November 2026."
     }
   ]
 }

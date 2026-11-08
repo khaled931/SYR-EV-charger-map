@@ -294,6 +294,7 @@ function formRecord() {
     charger_type_ar: form.charger_type_ar.value.trim(),
     charger_type_en: form.charger_type_en.value.trim(),
     charger_numbers: Number(form.charger_numbers.value),
+    total_power_kw: form.total_power_kw.value === '' ? null : Number(form.total_power_kw.value),
     site_type_ar: form.site_type_ar.value.trim(),
     site_type_en: form.site_type_en.value.trim(),
     google_maps_url: form.google_maps_url.value.trim(),
@@ -322,6 +323,7 @@ function editRecord(record) {
   form.charger_type_ar.value = record.charger_type_ar || record.connector_types?.[0] || '';
   form.charger_type_en.value = record.charger_type_en || record.connector_types?.[0] || '';
   form.charger_numbers.value = record.charger_numbers ?? record.charger_count ?? 1;
+  form.total_power_kw.value = record.total_power_kw ?? '';
   form.site_type_ar.value = record.site_type_ar || '';
   form.site_type_en.value = record.site_type_en || siteTypeEnglish[record.site_type_ar] || '';
   form.google_maps_url.value = record.google_maps_url || record.source_url || '';
@@ -475,6 +477,7 @@ function canonicalImportRecord(row) {
     charger_type_ar: String(value('Charger_Type_AR', 'Charger type', 'charger_type_ar', 'charger_type', 'connector_type') || connector).trim(),
     charger_type_en: String(value('Charger_Type_EN', 'charger_type_en', 'charger_type', 'connector_type') || connector).trim(),
     charger_numbers: Number(value('Charger_Numbers', 'Charger numbers', 'charger_numbers', 'charger_count')),
+    total_power_kw: value('Total_Power_kW', 'total_power_kw') === '' ? null : Number(value('Total_Power_kW', 'total_power_kw')),
     site_type_ar: siteTypeAr,
     site_type_en: String(value('Site_Type_EN', 'site_type_en') || siteTypeEnglish[siteTypeAr] || '').trim(),
     google_maps_url: String(value('Google_Maps_URL', 'google_maps_url', 'source_url') || '').trim(),
@@ -501,7 +504,7 @@ function clientValidation(record) {
   ];
   required.forEach(([key, label]) => { if (!record[key]) errors.push(`${label} مفقود.`); });
   if (!/^[A-Za-z0-9][A-Za-z0-9_-]{2,89}$/.test(record.suggested_id)) errors.push('صيغة Suggested_ID غير صالحة.');
-  if (!Number.isInteger(record.charger_numbers) || record.charger_numbers < 1 || record.charger_numbers > 200) errors.push('Charger_Numbers يجب أن يكون عدداً صحيحاً بين 1 و200.');
+  if (!Number.isInteger(record.charger_numbers) || record.charger_numbers < 0 || record.charger_numbers > 200) errors.push('Charger_Numbers يجب أن يكون عدداً صحيحاً بين 0 (غير معروف) و200.');
   if (!Number.isFinite(record.latitude) || record.latitude < 32 || record.latitude > 38) errors.push('Latitude غير صالح أو خارج سورية.');
   if (!Number.isFinite(record.longitude) || record.longitude < 35 || record.longitude > 43) errors.push('Longitude غير صالح أو خارج سورية.');
   return errors;
@@ -563,6 +566,7 @@ function exportRows() {
     Charger_Type_AR: record.charger_type_ar || record.connector_types?.[0] || '',
     Charger_Type_EN: record.charger_type_en || record.connector_types?.[0] || '',
     Charger_Numbers: record.charger_numbers ?? record.charger_count ?? '',
+    Total_Power_kW: record.total_power_kw ?? '',
     Site_Type_AR: record.site_type_ar || '',
     Site_Type_EN: record.site_type_en || '',
     Google_Maps_URL: record.google_maps_url || record.source_url || '',

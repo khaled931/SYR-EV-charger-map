@@ -65,8 +65,8 @@
               <input name="suggested_id" type="text" pattern="[A-Za-z0-9][A-Za-z0-9_-]{2,89}" placeholder="SY-DI-DAM-SITE-001" required />
             </label>
             <label class="field">
-              <span>عدد الشواحن <small>Charger numbers</small></span>
-              <input name="charger_numbers" type="number" min="1" max="200" step="1" required />
+              <span>عدد الشواحن <small>0 = غير معروف</small></span>
+              <input name="charger_numbers" type="number" min="0" max="200" step="1" required />
             </label>
             <label class="field field--checkbox">
               <input name="published" type="checkbox" checked />
@@ -74,6 +74,7 @@
             </label>
           </div>
 
+          <label class="field"><span>القدرة الاسمية الإجمالية للموقع (kW) <small>اختياري</small></span><input name="total_power_kw" type="number" min="0" step="any" /></label>
           <div class="bilingual-grid">
             <label class="field"><span>الشركة بالعربية <small>Company AR</small></span><input name="company_ar" type="text" required /></label>
             <label class="field" dir="ltr"><span>Company in English <small>Company EN</small></span><input name="company_en" type="text" required /></label>

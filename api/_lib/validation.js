@@ -49,7 +49,10 @@ function normalizeInput(input = {}) {
   const googleMapsUrl = cleanText(firstValue(input, ['google_maps_url', 'Google_Maps_URL', 'source_url']), 700);
   const latitude = Number(firstValue(input, ['latitude', 'Latitude']));
   const longitude = Number(firstValue(input, ['longitude', 'Longitude']));
-  const chargerNumbers = Number(firstValue(input, ['charger_numbers', 'Charger_Numbers', 'Charger numbers', 'charger_count']));
+  const rawCount = firstValue(input, ['charger_numbers', 'Charger_Numbers', 'Charger numbers', 'charger_count']);
+  const chargerNumbers = rawCount === '' ? NaN : Number(rawCount);
+  const rawTotalPower = firstValue(input, ['total_power_kw', 'Total_Power_kW']);
+  const totalPowerKw = rawTotalPower === '' ? null : Number(rawTotalPower);
   const ratedPowerKw = Number(firstValue(input, ['rated_power_kw', 'Rated_Power_kW', 'power_kw']));
   const gunsPerCharger = Number(firstValue(input, ['guns_per_charger', 'Guns_Per_Charger', 'guns']));
   const notesAr = cleanText(firstValue(input, ['notes_ar', 'Notes_AR', 'notes']), MAX_NOTES);
@@ -78,6 +81,7 @@ function normalizeInput(input = {}) {
     charger_numbers: chargerNumbers,
     charger_count: chargerNumbers,
     rated_power_kw: Number.isFinite(ratedPowerKw) && ratedPowerKw >= 0 ? ratedPowerKw : 0,
+    total_power_kw: totalPowerKw !== null && Number.isFinite(totalPowerKw) && totalPowerKw >= 0 ? totalPowerKw : null,
     guns_per_charger: Number.isFinite(gunsPerCharger) && gunsPerCharger >= 0 ? gunsPerCharger : 0,
     site_type_ar: siteTypeAr,
     site_type_en: siteTypeEn,
@@ -122,8 +126,8 @@ function validateRecord(input) {
   if (!/^[A-Za-z0-9][A-Za-z0-9_-]{2,89}$/.test(record.suggested_id)) {
     errors.push('Suggested_ID must contain 3–90 Latin letters, numbers, hyphens, or underscores and start with a letter or number.');
   }
-  if (!Number.isInteger(record.charger_numbers) || record.charger_numbers < 1 || record.charger_numbers > 200) {
-    errors.push('Charger numbers must be an integer between 1 and 200.');
+  if (!Number.isInteger(record.charger_numbers) || record.charger_numbers < 0 || record.charger_numbers > 200) {
+    errors.push('Charger numbers must be an integer between 0 (unknown) and 200.');
   }
   if (record.google_maps_url && !isGoogleMapsUrl(record.google_maps_url)) {
     errors.push('Google_Maps_URL must be a valid HTTPS Google Maps link.');
@@ -158,8 +162,14 @@ function publicRecord(record) {
     latitude: Number(record.latitude),
     longitude: Number(record.longitude),
     charger_count: Number(record.charger_numbers ?? record.charger_count ?? 0),
-    rated_power_kw: Number(record.rated_power_kw ?? 0),
-    guns_per_charger: Number(record.guns_per_charger ?? 0),
+    rated_power_kw: record.rated_power_kw == null ? null : Number(record.rated_power_kw),
+    total_power_kw: record.total_power_kw == null ? null : Number(record.total_power_kw),
+    guns_per_charger: record.guns_per_charger == null ? null : Number(record.guns_per_charger),
+    total_guns: record.total_guns == null ? null : Number(record.total_guns),
+    access_ar: record.access_ar || '',
+    access_en: record.access_en || '',
+    price_note_ar: record.price_note_ar || '',
+    price_note_en: record.price_note_en || '',
     status: record.status || 'listed',
     data_quality: record.data_quality || 'Medium Confidence',
     needs_review: Boolean(record.needs_review),
