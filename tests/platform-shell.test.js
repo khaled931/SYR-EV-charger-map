@@ -64,6 +64,7 @@ test('preserves workbook chargers and adds an airport record without inventing t
   assert.equal(airport.data_quality, 'Verified');
   assert.equal(airport.status, 'listed');
   assert.equal(airport.published, true);
+  assert.equal(airport.visibility, 'members');
   assert.equal(airport.needs_review, false);
   assert.deepEqual(airport.connector_types, []);
   assert.match(airport.notes_ar, /ليست الموقع الدقيق للشاحن/);
@@ -98,6 +99,7 @@ test('members-only stations are excluded from guest sampling', () => {
   const code = read('api/chargers.js');
   assert.match(code, /publicChargers = chargers\.filter\(\(row\) => row\.visibility !== 'members'\)/);
   assert.match(code, /signedInMemberStations/);
+  assert.match(code, /membersOnlyIds = new Set\(\['SY-RD-DAM-AIRPORT-001'\]\)/);
 });
 
 test('mobile map uses dynamic viewport sizing and compact footer logo', () => {

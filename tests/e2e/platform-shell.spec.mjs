@@ -8,11 +8,9 @@ test('unified shell and EV map work on the Vercel Preview', async ({ page }) => 
   await expect(page.locator('#map')).toBeVisible();
   await expect(page.locator('#chargerList .ev-card').first()).toBeVisible({ timeout: 25_000 });
 
-  // Airport charger is intentionally public even when the general dataset is guest-limited.
+  // Both airport and Harasta records are members-only and must not appear to guests.
   const airportCard = page.locator('#chargerList .ev-card').filter({ hasText: 'محطة شحن مطار دمشق الدولي' });
-  await expect(airportCard).toBeVisible();
-  await expect(airportCard).toContainText('Green Road');
-  await expect(airportCard).toContainText('تم التحقق');
+  await expect(airportCard).toHaveCount(0);
 
   await expect(page.locator('#chargerList .ev-card').filter({ hasText: 'محطة حرستا' })).toHaveCount(0);
   const cards = page.locator('#chargerList .ev-card');
@@ -82,6 +80,7 @@ test('public API and protected admin entry remain available', async ({ request }
   expect(Array.isArray(payload.chargers)).toBeTruthy();
   expect(payload.chargers.length).toBeGreaterThan(0);
   expect(payload.chargers.some((row) => row.id === 'SY-RD-HAR-HARASTA-001')).toBe(false);
+  expect(payload.chargers.some((row) => row.id === 'SY-RD-DAM-AIRPORT-001')).toBe(false);
 
   const admin = await request.get('/admin/');
   expect(admin.ok()).toBeTruthy();

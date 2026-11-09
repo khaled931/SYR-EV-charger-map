@@ -112,9 +112,12 @@ function applyAccess(payload, access) {
   const fullAccess = access?.allowed === true;
   const guestLimit = guestLimitFrom(access);
   // Members-only records are never included in guest samples or featured public stations.
-  const publicChargers = chargers.filter((row) => row.visibility !== 'members');
+  // The airport restriction is enforced by ID as well, even before Firestore migration.
+  const membersOnlyIds = new Set(['SY-RD-DAM-AIRPORT-001']);
+  const isMembersOnly = (row) => row.visibility === 'members' || membersOnlyIds.has(String(row.suggested_id || row.id || ''));
+  const publicChargers = chargers.filter((row) => !isMembersOnly(row));
   const guestSample = publicChargers.slice(0, guestLimit);
-  const publicStationIds = new Set(['SY-RD-DAM-AIRPORT-001']);
+  const publicStationIds = new Set();
   const featuredPublic = publicChargers.filter((row) =>
     row.published !== false &&
     publicStationIds.has(String(row.suggested_id || row.id || '')) &&
@@ -122,7 +125,7 @@ function applyAccess(payload, access) {
   );
   // Authentication unlocks the member-only station, without changing full-dataset entitlements.
   const signedInMemberStations = access?.authenticated === true && !fullAccess
-    ? chargers.filter((row) => row.visibility === 'members')
+    ? chargers.filter(isMembersOnly)
     : [];
   const visibleChargers = fullAccess ? chargers : guestSample.concat(featuredPublic, signedInMemberStations);
 

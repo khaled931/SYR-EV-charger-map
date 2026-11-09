@@ -109,6 +109,11 @@ const BUNDLED_RECORD_MIGRATIONS = [
     version: '2026-11-09-airport-operator-verified-v1',
     fields: ['company_ar', 'company_en', 'operator', 'operator_ar', 'operator_en', 'status', 'data_quality', 'needs_review', 'notes_ar', 'notes_en', 'published'],
   },
+  {
+    id: 'SY-RD-DAM-AIRPORT-001',
+    version: '2026-11-09-airport-members-only-v2',
+    fields: ['visibility', 'access_ar', 'access_en'],
+  },
 ];
 
 async function applyBundledRecordMigrations(db, payload) {

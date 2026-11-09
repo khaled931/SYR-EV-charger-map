@@ -5,8 +5,8 @@
     "source_file": "EV charger location.xlsx",
     "source_note_ar": "تمت مزامنة السجلات مباشرة مع ورقة Charger في الملف المرفوع، مع الحفاظ على المعرّفات والإحداثيات ووصف تجهيزات الشحن كما وردت في المصدر. أُضيف سجل أولي لمحطة مطار دمشق الدولي بتاريخ 9 نوفمبر 2026 استناداً إلى وصف إعلان دون رابط أصلي. أُضيف سجل محطة حرستا اعتماداً على بيانات صاحب المنصة في 9 نوفمبر 2026.",
     "source_note_en": "Records are synchronized directly with the Charger sheet in the uploaded workbook, preserving source IDs, coordinates, and charger configuration descriptions. A preliminary Damascus International Airport record was added on 9 November 2026 without an original announcement link. Harasta was added from platform-owner information on 9 November 2026.",
-    "data_quality_note_ar": "الحالة «مدرج» تعني أن الموقع وارد في بيانات المشروع وليست إثباتاً ميدانياً مستقلاً على التشغيل. يوجد سجل واحد بلا إحداثيات (FSD)، كما أن إحداثيات استراحة الجلاب وكلوفر مول شبه متطابقة رغم اختلاف الموقع الإداري؛ لذلك جرى إبقاؤها كما وردت ووسمها للتحقق بدلاً من اختلاق تصحيح. إحداثيات المطار مرجعية وليست موقع الشاحن، والمخارج وعدد الأجهزة غير مؤكدين. تحديث 9 نوفمبر 2026: أكد صاحب المنصة وجود سجل محطة مطار دمشق ومشغّلها Green Road؛ وسم «تم التحقق» مبني على هذا التأكيد فقط، وليس إثباتاً مستقلاً لبقية التفاصيل الفنية.",
-    "data_quality_note_en": "Listed status means a site is present in the project dataset, not independently field-verified as operational. One record (FSD) has no coordinates. Al Jallab Rest Area and Clover Mall have near-identical source coordinates despite different administrative locations, so the source values are preserved and flagged for verification rather than silently corrected. Airport coordinates are reference-only; charger and outlet counts and standards are unconfirmed. On 9 November 2026 the platform owner confirmed the Damascus Airport listing and Green Road operator. The Verified label reflects this confirmation, not independent confirmation of remaining technical details."
+    "data_quality_note_ar": "الحالة «مدرج» تعني أن الموقع وارد في بيانات المشروع وليست إثباتاً ميدانياً مستقلاً على التشغيل. يوجد سجل واحد بلا إحداثيات (FSD)، كما أن إحداثيات استراحة الجلاب وكلوفر مول شبه متطابقة رغم اختلاف الموقع الإداري؛ لذلك جرى إبقاؤها كما وردت ووسمها للتحقق بدلاً من اختلاق تصحيح. إحداثيات المطار مرجعية وليست موقع الشاحن، والمخارج وعدد الأجهزة غير مؤكدين. تحديث 9 نوفمبر 2026: أكد صاحب المنصة وجود سجل محطة مطار دمشق ومشغّلها Green Road؛ وسم «تم التحقق» مبني على هذا التأكيد فقط، وليس إثباتاً مستقلاً لبقية التفاصيل الفنية. تفاصيل محطة مطار دمشق الدولي متاحة للأعضاء المسجّلين فقط.",
+    "data_quality_note_en": "Listed status means a site is present in the project dataset, not independently field-verified as operational. One record (FSD) has no coordinates. Al Jallab Rest Area and Clover Mall have near-identical source coordinates despite different administrative locations, so the source values are preserved and flagged for verification rather than silently corrected. Airport coordinates are reference-only; charger and outlet counts and standards are unconfirmed. On 9 November 2026 the platform owner confirmed the Damascus Airport listing and Green Road operator. The Verified label reflects this confirmation, not independent confirmation of remaining technical details. Damascus International Airport station details are restricted to signed-in members."
   },
   "defaults": {
     "status": "listed",
@@ -540,8 +540,8 @@
       "data_quality": "Verified",
       "needs_review": false,
       "published": true,
-      "access_ar": "غير مؤكدة؛ المحطة ضمن نطاق المطار",
-      "access_en": "Unconfirmed; within airport premises",
+      "access_ar": "تفاصيل المحطة متاحة للمستخدمين المسجّلين فقط؛ الدخول إلى نطاق المطار غير مؤكد",
+      "access_en": "Station details are available to signed-in users only; physical airport access is unconfirmed",
       "price_note_ar": "غير معلنة",
       "price_note_en": "Not disclosed",
       "source_url": "https://www.google.com/maps/search/?api=1&query=Damascus+International+Airport+Syria",
@@ -551,7 +551,8 @@
       "notes_ar": "تم تأكيد إدراج المحطة واسم الجهة المشغلة Green Road من صاحب المنصة بتاريخ 9 نوفمبر 2026، وجرى وسم السجل «تم التحقق» بناءً على هذا التأكيد، وليس على تحقق ميداني مستقل موثق. ورد في الإعلان الأولي شحن سريع DC بقدرة اسمية إجمالية معلنة للموقع تبلغ 120 كيلوواط. لم تُؤكد أنواع الموصلات (CCS2 وGB/T DC مجرد احتمالات)، ولا عدد الأجهزة والمخارج أو توزيع القدرة أو ساعات العمل والأسعار ووسائل الدفع وإمكانية الوصول. الإحداثيات (33.410833، 36.513333) نقطة مرجعية لمطار دمشق وليست الموقع الدقيق للشاحن. رابط الخرائط للمطار فقط ولا يعد رابطاً لإعلان المحطة.",
       "notes_en": "The station listing and operator Green Road were confirmed by the platform owner on 9 November 2026, and this record is marked Verified on that basis, not on independent documented field verification. The initial announcement reported a nominal site-wide 120 kW DC fast-charging station. Connector standards (CCS2 and GB/T DC are only possibilities), number of chargers/outlets, power allocation, hours, pricing, payment and access remain unconfirmed. Coordinates (33.410833, 36.513333) are a reference point for Damascus International Airport, not the exact charger position. The Google Maps URL is for airport navigation and is not an announcement source.",
       "verification_date": "2026-11-09",
-      "verification_basis": "Platform-owner confirmation; independent public documentary verification not provided"
+      "verification_basis": "Platform-owner confirmation; independent public documentary verification not provided",
+      "visibility": "members"
     },
     {
       "id": "SY-RD-HAR-HARASTA-001",
