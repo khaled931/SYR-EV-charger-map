@@ -14,6 +14,7 @@ test('unified shell and EV map work on the Vercel Preview', async ({ page }) => 
   await expect(airportCard).toContainText('Green Road');
   await expect(airportCard).toContainText('تم التحقق');
 
+  await expect(page.locator('#chargerList .ev-card').filter({ hasText: 'محطة حرستا' })).toHaveCount(0);
   const cards = page.locator('#chargerList .ev-card');
   const initialCardCount = await cards.count();
   expect(initialCardCount).toBeGreaterThan(1);
@@ -80,6 +81,7 @@ test('public API and protected admin entry remain available', async ({ request }
   const payload = await api.json();
   expect(Array.isArray(payload.chargers)).toBeTruthy();
   expect(payload.chargers.length).toBeGreaterThan(0);
+  expect(payload.chargers.some((row) => row.id === 'SY-RD-HAR-HARASTA-001')).toBe(false);
 
   const admin = await request.get('/admin/');
   expect(admin.ok()).toBeTruthy();

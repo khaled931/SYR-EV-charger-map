@@ -73,6 +73,11 @@ function bundledRowToRecord(row = {}, defaults = {}) {
     total_power_kw: row.total_power_kw == null ? null : Number(row.total_power_kw),
     guns_per_charger: row.guns_per_charger === null ? null : (Number(row.guns_per_charger ?? defaults.guns_per_charger ?? 0) || 0),
     total_guns: row.total_guns == null ? null : Number(row.total_guns),
+    charger_units_kw: Array.isArray(row.charger_units_kw) ? row.charger_units_kw.map(Number).filter(Number.isFinite) : [],
+    contact_phone: String(row.contact_phone || ''),
+    opening_hours_ar: String(row.opening_hours_ar || ''),
+    opening_hours_en: String(row.opening_hours_en || ''),
+    visibility: row.visibility === 'members' ? 'members' : 'public',
     access_ar: String(row.access_ar || defaults.access_ar || 'غير محدد'),
     access_en: String(row.access_en || defaults.access_en || 'Unspecified'),
     price_note_ar: String(row.price_note_ar || defaults.price_note_ar || 'غير متوفر'),
@@ -147,13 +152,13 @@ async function applyBundledRecordMigrations(db, payload) {
     updatedCount += 1;
   }
 
-  // Insert a bundled station only when absent; preserve manually managed Firestore records.
-  const airportId = 'SY-RD-DAM-AIRPORT-001';
-  const airportRow = rows.find((row) => String(row.id || row.suggested_id || '') === airportId);
-  if (airportRow) {
+  // Insert newly bundled records without overwriting existing administrator edits.
+  for (const recordId of ['SY-RD-DAM-AIRPORT-001', 'SY-RD-HAR-HARASTA-001']) {
+    const bundled = rows.find((row) => String(row.id || row.suggested_id || '') === recordId);
+    if (!bundled) continue;
     try {
-      await collection.doc(airportId).create({
-        ...bundledRowToRecord(airportRow, payload.defaults || {}),
+      await collection.doc(recordId).create({
+        ...bundledRowToRecord(bundled, payload.defaults || {}),
         created_at: FieldValue.serverTimestamp(),
         updated_at: FieldValue.serverTimestamp(),
         created_by: 'system:bundled-insertion',
@@ -161,13 +166,12 @@ async function applyBundledRecordMigrations(db, payload) {
       });
       await db.collection('ev_charger_audit').add({
         action: 'bundled-data-insertion',
-        record_id: airportId,
+        record_id: recordId,
         actor_email: 'system:bundled-insertion',
         created_at: FieldValue.serverTimestamp(),
       });
       updatedCount += 1;
     } catch (error) {
-      // Concurrent serverless requests may race to create the same document.
       if (![6, '6', 'already-exists'].includes(error.code)) throw error;
     }
   }

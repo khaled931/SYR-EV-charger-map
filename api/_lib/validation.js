@@ -58,6 +58,13 @@ function normalizeInput(input = {}) {
   const notesAr = cleanText(firstValue(input, ['notes_ar', 'Notes_AR', 'notes']), MAX_NOTES);
   const notesEn = cleanText(firstValue(input, ['notes_en', 'Notes_EN']), MAX_NOTES);
   const sourceDate = cleanText(firstValue(input, ['source_date', 'Source_Date']), 40);
+  const contactPhone = cleanText(firstValue(input, ['contact_phone', 'Contact_Phone']), 40);
+  const openingHoursAr = cleanText(firstValue(input, ['opening_hours_ar', 'Opening_Hours_AR']), 180);
+  const openingHoursEn = cleanText(firstValue(input, ['opening_hours_en', 'Opening_Hours_EN']), 180);
+  const visibility = cleanText(firstValue(input, ['visibility', 'Visibility']) || 'public', 20);
+  const rawUnitPowers = firstValue(input, ['charger_units_kw', 'Charger_Units_kW']);
+  const chargerUnitsKw = (Array.isArray(rawUnitPowers) ? rawUnitPowers : String(rawUnitPowers).split(/[,،;\s]+/))
+    .map(Number).filter((v) => Number.isFinite(v) && v > 0);
 
   return {
     suggested_id: suggestedId,
@@ -82,6 +89,11 @@ function normalizeInput(input = {}) {
     charger_count: chargerNumbers,
     rated_power_kw: Number.isFinite(ratedPowerKw) && ratedPowerKw >= 0 ? ratedPowerKw : 0,
     total_power_kw: totalPowerKw !== null && Number.isFinite(totalPowerKw) && totalPowerKw >= 0 ? totalPowerKw : null,
+    charger_units_kw: chargerUnitsKw,
+    contact_phone: contactPhone,
+    opening_hours_ar: openingHoursAr,
+    opening_hours_en: openingHoursEn,
+    visibility,
     guns_per_charger: Number.isFinite(gunsPerCharger) && gunsPerCharger >= 0 ? gunsPerCharger : 0,
     site_type_ar: siteTypeAr,
     site_type_en: siteTypeEn,
@@ -129,6 +141,8 @@ function validateRecord(input) {
   if (!Number.isInteger(record.charger_numbers) || record.charger_numbers < 0 || record.charger_numbers > 200) {
     errors.push('Charger numbers must be an integer between 0 (unknown) and 200.');
   }
+  if (!['public', 'members'].includes(record.visibility)) errors.push('Visibility must be public or members.');
+  if (record.contact_phone && !/^\+?[0-9\s()\-]{7,40}$/.test(record.contact_phone)) errors.push('Contact phone has an invalid format.');
   if (record.google_maps_url && !isGoogleMapsUrl(record.google_maps_url)) {
     errors.push('Google_Maps_URL must be a valid HTTPS Google Maps link.');
   }
@@ -166,6 +180,11 @@ function publicRecord(record) {
     total_power_kw: record.total_power_kw == null ? null : Number(record.total_power_kw),
     guns_per_charger: record.guns_per_charger == null ? null : Number(record.guns_per_charger),
     total_guns: record.total_guns == null ? null : Number(record.total_guns),
+    charger_units_kw: Array.isArray(record.charger_units_kw) ? record.charger_units_kw : [],
+    contact_phone: record.contact_phone || '',
+    opening_hours_ar: record.opening_hours_ar || '',
+    opening_hours_en: record.opening_hours_en || '',
+    visibility: record.visibility === 'members' ? 'members' : 'public',
     access_ar: record.access_ar || '',
     access_en: record.access_en || '',
     price_note_ar: record.price_note_ar || '',

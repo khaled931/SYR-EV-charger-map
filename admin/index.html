@@ -70,11 +70,20 @@
             </label>
             <label class="field field--checkbox">
               <input name="published" type="checkbox" checked />
-              <span>نشر السجل للعامة <small>Published</small></span>
+              <span>تفعيل نشر السجل <small>قد يقتصر على المسجّلين</small></span>
             </label>
           </div>
 
-          <label class="field"><span>القدرة الاسمية الإجمالية للموقع (kW) <small>اختياري</small></span><input name="total_power_kw" type="number" min="0" step="any" /></label>
+          <div class="form-grid form-grid--three">
+            <label class="field"><span>إجمالي القدرة الاسمية (kW)</span><input name="total_power_kw" type="number" min="0" step="any" /></label>
+            <label class="field"><span>قدرات الشواحن (kW، بفواصل)</span><input name="charger_units_kw" type="text" placeholder="60, 120" /></label>
+            <label class="field"><span>إتاحة تفاصيل المحطة</span><select name="visibility"><option value="public">للزوار</option><option value="members">بعد تسجيل الدخول</option></select></label>
+          </div>
+          <div class="form-grid form-grid--three">
+            <label class="field"><span>رقم التواصل</span><input name="contact_phone" type="tel" placeholder="+963 ..." /></label>
+            <label class="field"><span>ساعات العمل بالعربية</span><input name="opening_hours_ar" type="text" placeholder="على مدار 24 ساعة" /></label>
+            <label class="field"><span>Opening hours (EN)</span><input name="opening_hours_en" type="text" placeholder="Open 24 hours" /></label>
+          </div>
           <div class="bilingual-grid">
             <label class="field"><span>الشركة بالعربية <small>Company AR</small></span><input name="company_ar" type="text" required /></label>
             <label class="field" dir="ltr"><span>Company in English <small>Company EN</small></span><input name="company_en" type="text" required /></label>

@@ -52,10 +52,10 @@ test('shared shell preserves bilingual direction and theme compatibility', () =>
 
 test('preserves workbook chargers and adds an airport record without inventing technical details', () => {
   const payload = JSON.parse(read('data/chargers.v2.json'));
-  assert.equal(payload.chargers.length, 19);
-  assert.equal(payload.chargers.reduce((sum, row) => sum + row.charger_count, 0), 27);
-  assert.equal(payload.chargers.reduce((sum, row) => sum + (row.total_power_kw || 0), 0), 2600);
-  assert.equal(payload.chargers.filter((row) => Number.isFinite(row.latitude) && Number.isFinite(row.longitude)).length, 18);
+  assert.equal(payload.chargers.length, 20);
+  assert.equal(payload.chargers.reduce((sum, row) => sum + row.charger_count, 0), 29);
+  assert.equal(payload.chargers.reduce((sum, row) => sum + (row.total_power_kw || 0), 0), 2780);
+  assert.equal(payload.chargers.filter((row) => Number.isFinite(row.latitude) && Number.isFinite(row.longitude)).length, 19);
   const airport = payload.chargers.find((row) => row.id === 'SY-RD-DAM-AIRPORT-001');
   assert.ok(airport);
   assert.equal(airport.charger_count, 0);
@@ -67,6 +67,18 @@ test('preserves workbook chargers and adds an airport record without inventing t
   assert.equal(airport.needs_review, false);
   assert.deepEqual(airport.connector_types, []);
   assert.match(airport.notes_ar, /ليست الموقع الدقيق للشاحن/);
+  const harasta = payload.chargers.find((row) => row.id === 'SY-RD-HAR-HARASTA-001');
+  assert.ok(harasta);
+  assert.equal(harasta.operator, 'سوبر تاج');
+  assert.equal(harasta.published, true);
+  assert.equal(harasta.visibility, 'members');
+  assert.equal(harasta.data_quality, 'Verified');
+  assert.equal(harasta.charger_count, 2);
+  assert.deepEqual(harasta.charger_units_kw, [60, 120]);
+  assert.equal(harasta.total_power_kw, 180);
+  assert.equal(harasta.contact_phone, '+963 982 238 371');
+  assert.equal(harasta.latitude, 33.5581426);
+  assert.equal(harasta.longitude, 36.3556189);
   const fsd = payload.chargers.find((row) => row.id === 'SY-TBD-TBD-FSD-001');
   assert.ok(fsd); assert.equal(fsd.latitude, null); assert.equal(fsd.longitude, null); assert.equal(fsd.needs_review, true);
   const jallab = payload.chargers.find((row) => row.id === 'SY-RD-DAM-JALLAB-001');
@@ -80,6 +92,12 @@ test('map keeps coordinate-pending records in the list and pins only mappable re
   assert.match(app, /state\.filtered\.filter\(\(item\) => item\.hasCoordinates\)/);
   assert.match(app, /coordinatesPending/);
   assert.doesNotMatch(app, /\.map\(\(row, index\) => normalize\(row, defaults, index\)\)\.filter/);
+});
+
+test('members-only stations are excluded from guest sampling', () => {
+  const code = read('api/chargers.js');
+  assert.match(code, /publicChargers = chargers\.filter\(\(row\) => row\.visibility !== 'members'\)/);
+  assert.match(code, /signedInMemberStations/);
 });
 
 test('mobile map uses dynamic viewport sizing and compact footer logo', () => {

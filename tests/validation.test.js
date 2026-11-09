@@ -44,3 +44,20 @@ test('rejects coordinates outside Syria', () => {
   assert.equal(result.valid, false);
   assert.match(result.errors.join(' '), /outside the accepted Syria bounding box/);
 });
+
+
+test('accepts Harasta contact, hours, members-only visibility and power values', () => {
+  const result = validateRecord({
+    ...validRecord,
+    Visibility: 'members',
+    Contact_Phone: '+963 982 238 371',
+    Opening_Hours_AR: 'على مدار 24 ساعة',
+    Charger_Units_kW: '60, 120',
+    Total_Power_kW: 180,
+  });
+  assert.equal(result.valid, true);
+  assert.equal(result.record.visibility, 'members');
+  assert.equal(result.record.contact_phone, '+963 982 238 371');
+  assert.deepEqual(result.record.charger_units_kw, [60, 120]);
+  assert.equal(result.record.total_power_kw, 180);
+});

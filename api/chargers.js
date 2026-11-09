@@ -111,16 +111,20 @@ function applyAccess(payload, access) {
   const chargers = Array.isArray(payload?.chargers) ? payload.chargers : [];
   const fullAccess = access?.allowed === true;
   const guestLimit = guestLimitFrom(access);
-  // Explicitly public stations remain available to guests beyond the sample limit.
-  // This does not expose any other members-only records.
-  const guestSample = chargers.slice(0, guestLimit);
+  // Members-only records are never included in guest samples or featured public stations.
+  const publicChargers = chargers.filter((row) => row.visibility !== 'members');
+  const guestSample = publicChargers.slice(0, guestLimit);
   const publicStationIds = new Set(['SY-RD-DAM-AIRPORT-001']);
-  const featuredPublic = chargers.filter((row) =>
+  const featuredPublic = publicChargers.filter((row) =>
     row.published !== false &&
     publicStationIds.has(String(row.suggested_id || row.id || '')) &&
     !guestSample.some((sample) => String(sample.suggested_id || sample.id || '') === String(row.suggested_id || row.id || ''))
   );
-  const visibleChargers = fullAccess ? chargers : guestSample.concat(featuredPublic);
+  // Authentication unlocks the member-only station, without changing full-dataset entitlements.
+  const signedInMemberStations = access?.authenticated === true && !fullAccess
+    ? chargers.filter((row) => row.visibility === 'members')
+    : [];
+  const visibleChargers = fullAccess ? chargers : guestSample.concat(featuredPublic, signedInMemberStations);
 
   return {
     ...payload,

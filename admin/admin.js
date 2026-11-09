@@ -295,6 +295,11 @@ function formRecord() {
     charger_type_en: form.charger_type_en.value.trim(),
     charger_numbers: Number(form.charger_numbers.value),
     total_power_kw: form.total_power_kw.value === '' ? null : Number(form.total_power_kw.value),
+    charger_units_kw: form.charger_units_kw.value.split(/[,،;\s]+/).map(Number).filter((v) => Number.isFinite(v) && v > 0),
+    contact_phone: form.contact_phone.value.trim(),
+    opening_hours_ar: form.opening_hours_ar.value.trim(),
+    opening_hours_en: form.opening_hours_en.value.trim(),
+    visibility: form.visibility.value,
     site_type_ar: form.site_type_ar.value.trim(),
     site_type_en: form.site_type_en.value.trim(),
     google_maps_url: form.google_maps_url.value.trim(),
@@ -324,6 +329,11 @@ function editRecord(record) {
   form.charger_type_en.value = record.charger_type_en || record.connector_types?.[0] || '';
   form.charger_numbers.value = record.charger_numbers ?? record.charger_count ?? 1;
   form.total_power_kw.value = record.total_power_kw ?? '';
+  form.charger_units_kw.value = (record.charger_units_kw || []).join(', ');
+  form.contact_phone.value = record.contact_phone || '';
+  form.opening_hours_ar.value = record.opening_hours_ar || '';
+  form.opening_hours_en.value = record.opening_hours_en || '';
+  form.visibility.value = record.visibility === 'members' ? 'members' : 'public';
   form.site_type_ar.value = record.site_type_ar || '';
   form.site_type_en.value = record.site_type_en || siteTypeEnglish[record.site_type_ar] || '';
   form.google_maps_url.value = record.google_maps_url || record.source_url || '';
@@ -362,6 +372,7 @@ function resetForm(clearMessage = true) {
   els.chargerForm.reset();
   els.chargerForm.elements.published.checked = true;
   els.chargerForm.elements.status.value = 'listed';
+  els.chargerForm.elements.visibility.value = 'public';
   els.chargerForm.elements.data_quality.value = 'Medium Confidence';
   els.editingId.value = '';
   els.formTitle.textContent = 'إضافة موقع شحن جديد';
@@ -478,6 +489,11 @@ function canonicalImportRecord(row) {
     charger_type_en: String(value('Charger_Type_EN', 'charger_type_en', 'charger_type', 'connector_type') || connector).trim(),
     charger_numbers: Number(value('Charger_Numbers', 'Charger numbers', 'charger_numbers', 'charger_count')),
     total_power_kw: value('Total_Power_kW', 'total_power_kw') === '' ? null : Number(value('Total_Power_kW', 'total_power_kw')),
+    charger_units_kw: Array.isArray(row.charger_units_kw) ? row.charger_units_kw : String(value('Charger_Units_kW', 'charger_units_kw')).split(/[,،;\s]+/).map(Number).filter((v) => Number.isFinite(v) && v > 0),
+    contact_phone: String(value('Contact_Phone', 'contact_phone') || ''),
+    opening_hours_ar: String(value('Opening_Hours_AR', 'opening_hours_ar') || ''),
+    opening_hours_en: String(value('Opening_Hours_EN', 'opening_hours_en') || ''),
+    visibility: String(value('Visibility', 'visibility') || 'public'),
     site_type_ar: siteTypeAr,
     site_type_en: String(value('Site_Type_EN', 'site_type_en') || siteTypeEnglish[siteTypeAr] || '').trim(),
     google_maps_url: String(value('Google_Maps_URL', 'google_maps_url', 'source_url') || '').trim(),
@@ -504,6 +520,7 @@ function clientValidation(record) {
   ];
   required.forEach(([key, label]) => { if (!record[key]) errors.push(`${label} مفقود.`); });
   if (!/^[A-Za-z0-9][A-Za-z0-9_-]{2,89}$/.test(record.suggested_id)) errors.push('صيغة Suggested_ID غير صالحة.');
+  if (!['public', 'members'].includes(record.visibility)) errors.push('إتاحة السجل غير صالحة.');
   if (!Number.isInteger(record.charger_numbers) || record.charger_numbers < 0 || record.charger_numbers > 200) errors.push('Charger_Numbers يجب أن يكون عدداً صحيحاً بين 0 (غير معروف) و200.');
   if (!Number.isFinite(record.latitude) || record.latitude < 32 || record.latitude > 38) errors.push('Latitude غير صالح أو خارج سورية.');
   if (!Number.isFinite(record.longitude) || record.longitude < 35 || record.longitude > 43) errors.push('Longitude غير صالح أو خارج سورية.');
@@ -567,6 +584,11 @@ function exportRows() {
     Charger_Type_EN: record.charger_type_en || record.connector_types?.[0] || '',
     Charger_Numbers: record.charger_numbers ?? record.charger_count ?? '',
     Total_Power_kW: record.total_power_kw ?? '',
+    Charger_Units_kW: Array.isArray(record.charger_units_kw) ? record.charger_units_kw.join(', ') : '',
+    Contact_Phone: record.contact_phone || '',
+    Opening_Hours_AR: record.opening_hours_ar || '',
+    Opening_Hours_EN: record.opening_hours_en || '',
+    Visibility: record.visibility || 'public',
     Site_Type_AR: record.site_type_ar || '',
     Site_Type_EN: record.site_type_en || '',
     Google_Maps_URL: record.google_maps_url || record.source_url || '',

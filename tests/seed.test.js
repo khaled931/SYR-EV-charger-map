@@ -53,3 +53,23 @@ test('preserves unknown device count and announced site capacity', () => {
   assert.deepEqual(record.connector_types, []);
   assert.equal(record.needs_review, true);
 });
+
+
+test('keeps Harasta member-only hours, phone and separate charger ratings', () => {
+  const record = bundledRowToRecord({
+    id: 'SY-RD-HAR-HARASTA-001',
+    name_ar: 'محطة حرستا',
+    operator: 'سوبر تاج',
+    charger_count: 2,
+    charger_units_kw: [60, 120],
+    total_power_kw: 180,
+    contact_phone: '+963 982 238 371',
+    opening_hours_ar: 'على مدار 24 ساعة',
+    visibility: 'members',
+  });
+  assert.deepEqual(record.charger_units_kw, [60, 120]);
+  assert.equal(record.total_power_kw, 180);
+  assert.equal(record.contact_phone, '+963 982 238 371');
+  assert.equal(record.opening_hours_ar, 'على مدار 24 ساعة');
+  assert.equal(record.visibility, 'members');
+});

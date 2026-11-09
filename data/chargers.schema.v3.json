@@ -109,6 +109,11 @@
       "maximum": 43
     },
     "total_power_kw": { "type": ["number", "null"], "minimum": 0 },
+    "charger_units_kw": { "type": "array", "items": { "type": "number", "exclusiveMinimum": 0 } },
+    "contact_phone": { "type": "string", "maxLength": 40 },
+    "opening_hours_ar": { "type": "string", "maxLength": 180 },
+    "opening_hours_en": { "type": "string", "maxLength": 180 },
+    "visibility": { "type": "string", "enum": ["public", "members"], "default": "public" },
     "published": {
       "type": "boolean",
       "default": true
