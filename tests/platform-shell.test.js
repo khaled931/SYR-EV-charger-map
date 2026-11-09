@@ -97,7 +97,7 @@ test('map keeps coordinate-pending records in the list and pins only mappable re
 
 test('members-only stations are excluded from guest sampling', () => {
   const code = read('api/chargers.js');
-  assert.match(code, /publicChargers = chargers\.filter\(\(row\) => row\.visibility !== 'members'\)/);
+  assert.match(code, /publicChargers = chargers\.filter\(\(row\) => !isMembersOnly\(row\)\)/);
   assert.match(code, /signedInMemberStations/);
   assert.match(code, /membersOnlyIds = new Set\(\['SY-RD-DAM-AIRPORT-001'\]\)/);
 });
