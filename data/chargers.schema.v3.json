@@ -108,6 +108,8 @@
       "minimum": 35,
       "maximum": 43
     },
+    "fast_charging_bays": { "type": ["integer", "null"], "minimum": 0, "maximum": 200 },
+    "slow_charging_bays": { "type": ["integer", "null"], "minimum": 0, "maximum": 200 },
     "total_power_kw": { "type": ["number", "null"], "minimum": 0 },
     "charger_units_kw": { "type": "array", "items": { "type": "number", "exclusiveMinimum": 0 } },
     "contact_phone": { "type": "string", "maxLength": 40 },

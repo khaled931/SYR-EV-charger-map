@@ -59,6 +59,8 @@ test('preserves workbook chargers and adds an airport record without inventing t
   const airport = payload.chargers.find((row) => row.id === 'SY-RD-DAM-AIRPORT-001');
   assert.ok(airport);
   assert.equal(airport.charger_count, 0);
+  assert.equal(airport.fast_charging_bays, 2);
+  assert.equal(airport.slow_charging_bays, 3);
   assert.equal(airport.total_power_kw, 120);
   assert.equal(airport.operator, 'Green Road');
   assert.equal(airport.data_quality, 'Verified');

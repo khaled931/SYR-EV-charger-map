@@ -79,6 +79,10 @@
             <label class="field"><span>قدرات الشواحن (kW، بفواصل)</span><input name="charger_units_kw" type="text" placeholder="60, 120" /></label>
             <label class="field"><span>إتاحة تفاصيل المحطة</span><select name="visibility"><option value="public">للزوار</option><option value="members">بعد تسجيل الدخول</option></select></label>
           </div>
+          <div class="form-grid form-grid--two">
+            <label class="field"><span>مواقف الشحن السريع</span><input name="fast_charging_bays" type="number" min="0" max="200" step="1" /></label>
+            <label class="field"><span>مواقف الشحن البطيء</span><input name="slow_charging_bays" type="number" min="0" max="200" step="1" /></label>
+          </div>
           <div class="form-grid form-grid--three">
             <label class="field"><span>رقم التواصل</span><input name="contact_phone" type="tel" placeholder="+963 ..." /></label>
             <label class="field"><span>ساعات العمل بالعربية</span><input name="opening_hours_ar" type="text" placeholder="على مدار 24 ساعة" /></label>

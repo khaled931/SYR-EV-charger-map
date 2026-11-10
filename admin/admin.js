@@ -294,6 +294,8 @@ function formRecord() {
     charger_type_ar: form.charger_type_ar.value.trim(),
     charger_type_en: form.charger_type_en.value.trim(),
     charger_numbers: Number(form.charger_numbers.value),
+    fast_charging_bays: form.fast_charging_bays.value === '' ? null : Number(form.fast_charging_bays.value),
+    slow_charging_bays: form.slow_charging_bays.value === '' ? null : Number(form.slow_charging_bays.value),
     total_power_kw: form.total_power_kw.value === '' ? null : Number(form.total_power_kw.value),
     charger_units_kw: form.charger_units_kw.value.split(/[,،;\s]+/).map(Number).filter((v) => Number.isFinite(v) && v > 0),
     contact_phone: form.contact_phone.value.trim(),
@@ -328,6 +330,8 @@ function editRecord(record) {
   form.charger_type_ar.value = record.charger_type_ar || record.connector_types?.[0] || '';
   form.charger_type_en.value = record.charger_type_en || record.connector_types?.[0] || '';
   form.charger_numbers.value = record.charger_numbers ?? record.charger_count ?? 1;
+  form.fast_charging_bays.value = record.fast_charging_bays ?? '';
+  form.slow_charging_bays.value = record.slow_charging_bays ?? '';
   form.total_power_kw.value = record.total_power_kw ?? '';
   form.charger_units_kw.value = (record.charger_units_kw || []).join(', ');
   form.contact_phone.value = record.contact_phone || '';
@@ -488,6 +492,8 @@ function canonicalImportRecord(row) {
     charger_type_ar: String(value('Charger_Type_AR', 'Charger type', 'charger_type_ar', 'charger_type', 'connector_type') || connector).trim(),
     charger_type_en: String(value('Charger_Type_EN', 'charger_type_en', 'charger_type', 'connector_type') || connector).trim(),
     charger_numbers: Number(value('Charger_Numbers', 'Charger numbers', 'charger_numbers', 'charger_count')),
+    fast_charging_bays: value('Fast_Charging_Bays', 'fast_charging_bays') === '' ? null : Number(value('Fast_Charging_Bays', 'fast_charging_bays')),
+    slow_charging_bays: value('Slow_Charging_Bays', 'slow_charging_bays') === '' ? null : Number(value('Slow_Charging_Bays', 'slow_charging_bays')),
     total_power_kw: value('Total_Power_kW', 'total_power_kw') === '' ? null : Number(value('Total_Power_kW', 'total_power_kw')),
     charger_units_kw: Array.isArray(row.charger_units_kw) ? row.charger_units_kw : String(value('Charger_Units_kW', 'charger_units_kw')).split(/[,،;\s]+/).map(Number).filter((v) => Number.isFinite(v) && v > 0),
     contact_phone: String(value('Contact_Phone', 'contact_phone') || ''),
@@ -583,6 +589,8 @@ function exportRows() {
     Charger_Type_AR: record.charger_type_ar || record.connector_types?.[0] || '',
     Charger_Type_EN: record.charger_type_en || record.connector_types?.[0] || '',
     Charger_Numbers: record.charger_numbers ?? record.charger_count ?? '',
+    Fast_Charging_Bays: record.fast_charging_bays ?? '',
+    Slow_Charging_Bays: record.slow_charging_bays ?? '',
     Total_Power_kW: record.total_power_kw ?? '',
     Charger_Units_kW: Array.isArray(record.charger_units_kw) ? record.charger_units_kw.join(', ') : '',
     Contact_Phone: record.contact_phone || '',

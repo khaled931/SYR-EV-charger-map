@@ -73,6 +73,8 @@ function bundledRowToRecord(row = {}, defaults = {}) {
     total_power_kw: row.total_power_kw == null ? null : Number(row.total_power_kw),
     guns_per_charger: row.guns_per_charger === null ? null : (Number(row.guns_per_charger ?? defaults.guns_per_charger ?? 0) || 0),
     total_guns: row.total_guns == null ? null : Number(row.total_guns),
+    fast_charging_bays: Number.isInteger(row.fast_charging_bays) && row.fast_charging_bays >= 0 ? row.fast_charging_bays : null,
+    slow_charging_bays: Number.isInteger(row.slow_charging_bays) && row.slow_charging_bays >= 0 ? row.slow_charging_bays : null,
     charger_units_kw: Array.isArray(row.charger_units_kw) ? row.charger_units_kw.map(Number).filter(Number.isFinite) : [],
     contact_phone: String(row.contact_phone || ''),
     opening_hours_ar: String(row.opening_hours_ar || ''),
@@ -106,13 +108,8 @@ const BUNDLED_RECORD_MIGRATIONS = [
   },
   {
     id: 'SY-RD-DAM-AIRPORT-001',
-    version: '2026-11-09-airport-operator-verified-v1',
-    fields: ['company_ar', 'company_en', 'operator', 'operator_ar', 'operator_en', 'status', 'data_quality', 'needs_review', 'notes_ar', 'notes_en', 'published'],
-  },
-  {
-    id: 'SY-RD-DAM-AIRPORT-001',
-    version: '2026-11-09-airport-members-only-v2',
-    fields: ['visibility', 'access_ar', 'access_en'],
+    version: '2026-11-10-airport-charging-bays-v3',
+    fields: ['company_ar', 'company_en', 'operator', 'operator_ar', 'operator_en', 'status', 'data_quality', 'needs_review', 'notes_ar', 'notes_en', 'published', 'visibility', 'access_ar', 'access_en', 'fast_charging_bays', 'slow_charging_bays'],
   },
 ];
 

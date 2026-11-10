@@ -51,6 +51,10 @@ function normalizeInput(input = {}) {
   const longitude = Number(firstValue(input, ['longitude', 'Longitude']));
   const rawCount = firstValue(input, ['charger_numbers', 'Charger_Numbers', 'Charger numbers', 'charger_count']);
   const chargerNumbers = rawCount === '' ? NaN : Number(rawCount);
+  const fastBaysInput = firstValue(input, ['fast_charging_bays', 'Fast_Charging_Bays']);
+  const slowBaysInput = firstValue(input, ['slow_charging_bays', 'Slow_Charging_Bays']);
+  const fastBays = fastBaysInput === '' ? null : Number(fastBaysInput);
+  const slowBays = slowBaysInput === '' ? null : Number(slowBaysInput);
   const rawTotalPower = firstValue(input, ['total_power_kw', 'Total_Power_kW']);
   const totalPowerKw = rawTotalPower === '' ? null : Number(rawTotalPower);
   const ratedPowerKw = Number(firstValue(input, ['rated_power_kw', 'Rated_Power_kW', 'power_kw']));
@@ -87,6 +91,8 @@ function normalizeInput(input = {}) {
     connector_types: [chargerTypeEn || chargerTypeAr].filter(Boolean),
     charger_numbers: chargerNumbers,
     charger_count: chargerNumbers,
+    fast_charging_bays: fastBays,
+    slow_charging_bays: slowBays,
     rated_power_kw: Number.isFinite(ratedPowerKw) && ratedPowerKw >= 0 ? ratedPowerKw : 0,
     total_power_kw: totalPowerKw !== null && Number.isFinite(totalPowerKw) && totalPowerKw >= 0 ? totalPowerKw : null,
     charger_units_kw: chargerUnitsKw,
@@ -141,6 +147,9 @@ function validateRecord(input) {
   if (!Number.isInteger(record.charger_numbers) || record.charger_numbers < 0 || record.charger_numbers > 200) {
     errors.push('Charger numbers must be an integer between 0 (unknown) and 200.');
   }
+  for (const field of ['fast_charging_bays', 'slow_charging_bays']) {
+    if (record[field] !== null && (!Number.isInteger(record[field]) || record[field] < 0 || record[field] > 200)) errors.push(field + ' must be an integer between 0 and 200.');
+  }
   if (!['public', 'members'].includes(record.visibility)) errors.push('Visibility must be public or members.');
   if (record.contact_phone && !/^\+?[0-9\s()\-]{7,40}$/.test(record.contact_phone)) errors.push('Contact phone has an invalid format.');
   if (record.google_maps_url && !isGoogleMapsUrl(record.google_maps_url)) {
@@ -180,6 +189,8 @@ function publicRecord(record) {
     total_power_kw: record.total_power_kw == null ? null : Number(record.total_power_kw),
     guns_per_charger: record.guns_per_charger == null ? null : Number(record.guns_per_charger),
     total_guns: record.total_guns == null ? null : Number(record.total_guns),
+    fast_charging_bays: Number.isInteger(record.fast_charging_bays) ? record.fast_charging_bays : null,
+    slow_charging_bays: Number.isInteger(record.slow_charging_bays) ? record.slow_charging_bays : null,
     charger_units_kw: Array.isArray(record.charger_units_kw) ? record.charger_units_kw : [],
     contact_phone: record.contact_phone || '',
     opening_hours_ar: record.opening_hours_ar || '',

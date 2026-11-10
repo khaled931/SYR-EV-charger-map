@@ -61,3 +61,15 @@ test('accepts Harasta contact, hours, members-only visibility and power values',
   assert.deepEqual(result.record.charger_units_kw, [60, 120]);
   assert.equal(result.record.total_power_kw, 180);
 });
+
+test('validates parking bays without changing charger device count', () => {
+  const result = validateRecord({ ...validRecord, Charger_Numbers: 0, Fast_Charging_Bays: 2, Slow_Charging_Bays: 3 });
+  assert.equal(result.valid, true);
+  assert.equal(result.record.fast_charging_bays, 2);
+  assert.equal(result.record.slow_charging_bays, 3);
+  assert.equal(result.record.charger_count, 0);
+});
+test('rejects negative or fractional charging-bay counts', () => {
+  assert.equal(validateRecord({ ...validRecord, Fast_Charging_Bays: -1 }).valid, false);
+  assert.equal(validateRecord({ ...validRecord, Slow_Charging_Bays: 2.5 }).valid, false);
+});

@@ -73,3 +73,14 @@ test('keeps Harasta member-only hours, phone and separate charger ratings', () =
   assert.equal(record.opening_hours_ar, 'على مدار 24 ساعة');
   assert.equal(record.visibility, 'members');
 });
+
+test('retains charging bays without inventing charger hardware at airport', () => {
+  const record = bundledRowToRecord({
+    id: 'SY-RD-DAM-AIRPORT-001', charger_count: 0,
+    fast_charging_bays: 2, slow_charging_bays: 3, visibility: 'members'
+  });
+  assert.equal(record.fast_charging_bays, 2);
+  assert.equal(record.slow_charging_bays, 3);
+  assert.equal(record.charger_count, 0);
+  assert.equal(record.visibility, 'members');
+});
