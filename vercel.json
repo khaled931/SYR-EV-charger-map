@@ -114,5 +114,24 @@
       "source": "/data/chargers.v2.json",
       "destination": "/api/chargers"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "lang",
+          "value": "en"
+        }
+      ],
+      "destination": "https://syrianrenewables.com/en/ev-chargers",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "destination": "https://syrianrenewables.com/ar/ev-chargers",
+      "permanent": false
+    }
   ]
 }
